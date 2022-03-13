@@ -1,0 +1,8 @@
+{
+  "test_model_calendar_components.py::test_add_calendar": true,
+  "test_model_calendar_components.py::test_calendar_get_published": true,
+  "test_model_calendar_components.py::test_delete_calendar": true,
+  "test_model_components.py::test_calendar_get_draft": true,
+  "test_model_components.py::test_calendar_get_empty": true,
+  "test_model_components.py::test_calendar_get_published": true
+}

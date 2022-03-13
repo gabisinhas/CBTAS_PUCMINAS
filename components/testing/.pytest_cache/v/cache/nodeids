@@ -1,0 +1,20 @@
+[
+  "test_assessment_components.py::test_add_assessment",
+  "test_model_calendar_components.py::test_add_calendar",
+  "test_model_calendar_components.py::test_add_calendar_exist_already",
+  "test_model_calendar_components.py::test_calendar_get_draft",
+  "test_model_calendar_components.py::test_calendar_get_empty",
+  "test_model_calendar_components.py::test_calendar_get_final",
+  "test_model_calendar_components.py::test_calendar_get_published",
+  "test_model_calendar_components.py::test_delete_calendar",
+  "test_model_calendar_components.py::test_delete_calendar_does_exist",
+  "test_model_calendar_components.py::test_delete_calendar_does_not_exist",
+  "test_model_components.py::test_calendar_get_all",
+  "test_model_components.py::test_calendar_get_draft",
+  "test_model_components.py::test_calendar_get_empty",
+  "test_model_components.py::test_calendar_get_published",
+  "test_model_history_component.py::test_history_track_add_full",
+  "test_model_history_component.py::test_history_track_add_with_no_action_after_before_object",
+  "test_model_history_component.py::test_history_track_add_with_no_action_owner",
+  "test_model_history_component.py::test_history_track_add_with_no_id"
+]
