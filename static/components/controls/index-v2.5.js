@@ -65,10 +65,10 @@ var index = new Vue ({
                         <div class="bx--row" style="margin-right: unset; margin-left: unset;">
                             <div class="bx--col" >
                                 <h1 style="font-size: 2.625rem; font-weight: 300;">
-                                    Welcome!
+                                    Bem Vindo!
                                 </h1>
-                                <h4 style="font-size: 0.925rem;font-weight: 300;line-height: 2.4; padding-bottom: 10px;">
-                                    Create a Trip Query Form request or check your existing ones.
+                                <h4 style="font-size: 0.925rem;font-weight: 450;line-height: 2.4; padding-bottom: 10px;">
+                                    Envie um formulário novo ou visualize seus formulários já submetidos.
                                 </h4>
                             </div>
                         </div>
@@ -76,7 +76,7 @@ var index = new Vue ({
                             <div class="bx--col" style="text-align: center;">
                                 <button id="tooltip_cf" class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-start"
                                   data-tooltip-icon
-                                  @click="this.window.location='/add_assessment'"
+                                  @click="this.window.location='/formulario'"
                                   >
                                   <img src="/static/images/new_request_button.svg"/>
                                 </button>
@@ -99,7 +99,7 @@ var index = new Vue ({
 
             </div>
             <footer class="footer">
-                <a><img src="/static/images/IBM_logo_black.png"></a>
+                <a><img src=""></a>
             </footer>
         </div>
       `

@@ -17,7 +17,6 @@ var add_assessment = new Vue ({
             title: '',
             subtitle: ''
         },
-        newco_user: false,
         business_data:{
             serial_number:'',
             first_name:'',
@@ -41,13 +40,6 @@ var add_assessment = new Vue ({
             status: "Opened",
             comments: ""
         },
-        // Information variables regarding page
-        information: {
-            title1: 'Attention:',
-            subtitle1: 'Please visit the <a href="https://w3.kyndryl.net/hr/web/mobility/assignments/" target="_blank"><strong class="links">Global Mobility</strong></a> page and the <a href="https://w3.kyndryl.net/hr/askhr" target="_blank"><strong class="links">ASKHR bot</strong></a> before you submit a query/support request here. Your question may already be listed and answered there.',
-            title2: 'Attention:',
-            subtitle2: 'Please visit the <a href="https://w3.ibm.com/hr/web/mobility/assignments/" target="_blank"><strong class="links">Global Mobility</strong></a> page and the <a href="https://w3.ibm.com/hr/askhr/" target="_blank"><strong class="links">ASKHR bot</strong></a> before you submit a query/support request here. Your question may already be listed and answered there.',
-        },
         attachments: {},
         warning:{
             serial_number: false,
@@ -64,21 +56,21 @@ var add_assessment = new Vue ({
             query_pi: false,
             query_type: false
         },
-        required_field: 'Required field',
+        required_field: 'Campo Obrigatório',
         yes_no_options:[
-            {'text': 'Yes', 'value': 'Yes'},
-            {'text': 'No', 'value': 'No'}
+            {'text': 'Sim', 'value': 'Sim'},
+            {'text': 'Não', 'value': 'Não'}
         ],
         checkbox_query_type:[
-            {'text': 'Immigration', 'value': 'immigration'},
-            {'text': 'Tax', 'value': 'tax'},
-            {'text': 'PWN (Posted Work Notification) Applicable for travellers into and within the European regions','value':'pwn'}
+            {'text': 'Immigração', 'value': 'immigration'},
+            {'text': 'Taxas', 'value': 'tax'},
+            {'text': 'Pós Trabalho','value':'pwn'}
         ],
-        checkbox_query_pi: 'By providing your personal information and clicking Submit, you are giving us your consent for collection and sharing your PI data within Global Mobility or with IBM approved third party service providers who act on behalf of IBM, anywhere in the world, where we do business.',
+        checkbox_query_pi: 'Ao fornecer sua informação pessoal e ao clicar no botão ENVIAR, você está consentindo em compartilhar dados pessoais com o HR Global Mobility.',
         overlay: {
             message: '',
             message_options: {
-                'assessment_added_success': 'Your Cross Border Travel Assessment Support Form has been submitted successfully. Thank you for contacting us.'
+                'assessment_added_success': 'Seu formulário foi submetido com sucesso.'
             },
             type: '',
             close_btn_action: 'success'
@@ -90,7 +82,7 @@ var add_assessment = new Vue ({
         },
         message_options:{
 
-        'required_field': 'Please fill the required fields',
+        'required_field': 'Por favor preencher os campos mandatórios',
         },
         custom_message: '',
         country_options:[
@@ -870,25 +862,6 @@ var add_assessment = new Vue ({
         'select_standard': Selects.select_standard,
         'select_common': Selects.select_common
     },
-    created() {
-        // 1. Start Loader
-        this.loading.initial = true;
-
-        // 2. Call current user data
-        axios.
-            get('/assessment-management/user/').
-            then(response => {
-
-                // Populate user data
-                this.business_data.serial_number = response.data[1]['serial_number'];
-                this.business_data.first_name = response.data[1]['first_name'];
-                this.business_data.last_name = response.data[1]['last_name'];
-                this.business_data.email = response.data[1]['mail'];
-                this.business_data.bus_unit = response.data[1]['bus_unit'];
-                this.newco_user = response.data[1]['newco_user'];
-                this.loading.initial = false;
-            })
-    },
     computed: {
         start_date() {
             return this.business_data.planned_start;
@@ -915,7 +888,7 @@ var add_assessment = new Vue ({
         check_same_country(){
             if(this.business_data.origin_country==this.business_data.destin_country){
                 this.toast.type = 'warning';
-                this.toast.title = 'You can not select the same Country for origin and destination';
+                this.toast.title = 'Você não pode selecionar o mesmo país de origem e destino';
                 this.toast.subtitle = '';
                 this.toast.show = true;
                 this.business_data.destin_country = "";
@@ -939,7 +912,7 @@ var add_assessment = new Vue ({
 
             if(temp_start_date < current_date){
                 this.toast.type = 'warning';
-                this.toast.title = 'Planned start date should be greater than today.';
+                this.toast.title = 'Data de início planejada deve ser maior que a data de hoje.';
                 this.toast.subtitle = '';
                 this.toast.show = true;
                 return true;
@@ -957,13 +930,13 @@ var add_assessment = new Vue ({
 
             if(temp_end_date <= current_date){
                 this.toast.type = 'warning';
-                this.toast.title = 'Planned end date should be greater than today.';
+                this.toast.title = 'Data de fim planejada deve ser maior que a data de hoje.';
                 this.toast.subtitle = '';
                 this.toast.show = true;
                 return true;
             }else if(temp_end_date <= temp_start_date){
                 this.toast.type = 'warning';
-                this.toast.title = 'Planned end date should be greater than planned start date.';
+                this.toast.title = 'Data de fim planejada deve ser maior que a data de início planejada.';
                 this.toast.subtitle = '';
                 this.toast.show = true;
                 return true;
@@ -1069,36 +1042,36 @@ var add_assessment = new Vue ({
             }
             else if(!ready_to_go_attachment){
                 this.toast.type = 'warning';
-                this.toast.title = 'You are missing the attachment';
+                this.toast.title = 'Por favor anexe o arquivo';
                 this.toast.subtitle = '';
                 this.toast.show = true;
             }
             else if(!ready_to_go){
                 this.toast.type = 'warning';
-                this.toast.title = 'You are missing required fields';
+                this.toast.title = 'Por favor preencher os campos obrigatórios';
                 this.toast.subtitle = '';
                 this.toast.show = true;
             }
         },
 
-        get_user_data: function(){
-
-            // Call current user data
-            this.loading.initial = true;
-            axios.
-                get('/assessment-management/user/'+this.business_data.serial_number).
-                then(response =>{
-                    // Populate user data
-                    this.business_data.employee_id = response.data[1]['serial_number'];
-                    this.business_data.first_name = response.data[1]['first_name'];
-                    this.business_data.last_name = response.data[1]['last_name'];
-                    this.business_data.email = response.data[1]['mail'];
-                    this.business_data.bus_unit = response.data[1]['bus_unit'];
-                    this.business_data.people_manager_email = response.data[1]['manager_email'];
-                    this.business_data.manager_name = response.data[1]['manager_name'];
-                    this.loading.initial = false;
-                })
-        },
+//        get_user_data: function(){
+//
+//            // Call current user data
+//            this.loading.initial = true;
+//            axios.
+//                get('/assessment-management/user/'+this.business_data.serial_number).
+//                then(response =>{
+//                    // Populate user data
+//                    this.business_data.employee_id = response.data[1]['serial_number'];
+//                    this.business_data.first_name = response.data[1]['first_name'];
+//                    this.business_data.last_name = response.data[1]['last_name'];
+//                    this.business_data.email = response.data[1]['mail'];
+//                    this.business_data.bus_unit = response.data[1]['bus_unit'];
+//                    this.business_data.people_manager_email = response.data[1]['manager_email'];
+//                    this.business_data.manager_name = response.data[1]['manager_name'];
+//                    this.loading.initial = false;
+//                })
+//        },
 
         closeButtonOverlayHandler: function (e) {
             if (this.overlay.close_btn_action == 'success') {
@@ -1138,7 +1111,7 @@ var add_assessment = new Vue ({
 
         file_size_exception(){
             this.toast.type = 'warning';
-            this.toast.title = 'The attachment file size should not exceed 10MB';
+            this.toast.title = 'O arquivo não pode exceder o tamanho de 10MB';
             this.toast.subtitle = '';
             this.toast.show = true;
         }
@@ -1168,29 +1141,12 @@ var add_assessment = new Vue ({
                     </div>
                 </div>
             </div>
-            <!-- Information section -->
             <div class= "bx--grid " style="padding-left: 4%; padding-right: 45%; margin-left: auto; margin-right: auto;">
-                    <div class="bx--row">
-                        <div v-if="newco_user === true" class="bx--col" >
-                            <notification_info
-                                :title="information.title1"
-                                :subtitle="information.subtitle1"
-                                >
-                            </notification_info>
-                        </div>
-                        <div v-else class="bx--col" >
-                            <notification_info
-                                :title="information.title2"
-                                :subtitle="information.subtitle2"
-                                >
-                            </notification_info>
-                        </div>
-                    </div>
                 <!-- Personal Details Section -->
                 <div class="bx--row" style="padding-top:28px; padding-bottom: 16px;">
                     <div class="bx--col" style="margin-left: auto; margin-right: auto;">
                         <img src="/static/images/details_black.png" style="float:left; vertical-align: bottom; padding-top:3px;"/>
-                        <h2 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Personal Details</h2>
+                        <h2 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Dados Pessoais</h2>
                     </div>
                 </div>
                 <div class="bx--row" style="padding-top:16px;">
@@ -1198,7 +1154,7 @@ var add_assessment = new Vue ({
                    <div class="bx--col">
                         <text_input_standard
                             v-model="business_data.serial_number"
-                            v-bind:label="'Employee Id (CNUM)'"
+                            v-bind:label="'CPF'"
                             v-bind:mandatory="true"
                             v-on:change.native="get_user_data()"
                             v-bind:invalid="warning.serial_number"
@@ -1213,7 +1169,7 @@ var add_assessment = new Vue ({
                     <div class="bx--col" >
                         <text_input_standard
                             v-model="business_data.first_name"
-                            v-bind:label="'Employee First Name'"
+                            v-bind:label="'Nome'"
                             v-bind:readonly="true"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.first_name"
@@ -1224,7 +1180,7 @@ var add_assessment = new Vue ({
                    <div class="bx--col" >
                         <text_input_standard
                             v-model="business_data.last_name"
-                            v-bind:label="'Employee Last Name'"
+                            v-bind:label="'Sobrenome'"
                             v-bind:readonly="true"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.last_name"
@@ -1237,7 +1193,7 @@ var add_assessment = new Vue ({
                     <div class="bx--col" >
                         <text_input_standard
                             v-model="business_data.email"
-                            v-bind:label="'IBM email'"
+                            v-bind:label="'email'"
                             v-bind:readonly="true"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.email"
@@ -1248,7 +1204,7 @@ var add_assessment = new Vue ({
                     <div class="bx--col" >
                         <text_input_standard
                             v-model="business_data.phone"
-                            v-bind:label="'Contact Phone#'"
+                            v-bind:label="'Telefone de Contato#'"
                             >
                         </text_input_standard>
                     </div>
@@ -1259,7 +1215,7 @@ var add_assessment = new Vue ({
                             v-model="business_data.nationality"
                             v-bind:select_id="'nationality_select_id'"
                             v-bind:options="country_options"
-                            v-bind:label="'Citizenship / Nationality'"
+                            v-bind:label="'Nacionalidade'"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.nationality"
                             :invalid_msg="required_field"
@@ -1269,7 +1225,7 @@ var add_assessment = new Vue ({
                      <div class="bx--col" >
                         <text_input_standard
                              v-model="business_data.bus_unit"
-                             v-bind:label="'Business Unit'"
+                             v-bind:label="'Unidade de Negócio'"
                              >
                         </text_input_standard>
                     </div>
@@ -1278,14 +1234,14 @@ var add_assessment = new Vue ({
                     <div class="bx--col" >
                         <text_input_standard
                             v-model="business_data.project_dept"
-                            v-bind:label="'Project/Dept'"
+                            v-bind:label="'Projeto'"
                             >
                         </text_input_standard>
                     </div>
                      <div class="bx--col" >
                         <text_input_standard
                             v-model="business_data.email_copy"
-                            v-bind:label="'Email Ccd'"
+                            v-bind:label="'Email em cópia'"
                             >
                         </text_input_standard>
                     </div>
@@ -1294,14 +1250,14 @@ var add_assessment = new Vue ({
                 <div class="bx--row" style="padding-top:38px; padding-bottom:16px;">
                     <div class="bx--col" style="margin-left: auto; margin-right: auto;">
                         <img src="/static/images/travel_icon.png" style="float:left; vertical-align: bottom; padding-top:3px;"/>
-                        <h2 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Travel Details</h2>
+                        <h2 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Detalhes da Viagem</h2>
                     </div>
                 </div>
                  <div class="bx--row" style="padding-top:16px;">
                     <div class="bx--col" style="width: 50%;">
                         <radio_button_standard
                             v-model="business_data.cbta_question"
-                            v-bind:label="'Have you already completed a CBTA assessment?'"
+                            v-bind:label="'Você completou o checklist de viagem?'"
                             v-bind:options="yes_no_options"
                             v-bind:mandatory="true"
                             v-bind:group_id="'cbta_question_option'"
@@ -1314,7 +1270,7 @@ var add_assessment = new Vue ({
                      <div class="bx--col" style="width: 50%;">
                         <div>
                             <input_files v-show="business_data.cbta_question=='Yes'"
-                                v-bind:label="'Add CBTA assessment result screenshot'"
+                                v-bind:label="'Anexe o arquivo de evidência'"
                                 v-bind:data_table="attachments"
                                 v-bind:mandatory="true"
                                 v-on:add_action="add_attachment($event)"
@@ -1332,7 +1288,7 @@ var add_assessment = new Vue ({
                             v-model="business_data.origin_country"
                             v-bind:select_id="'origin_country_select_id'"
                             v-bind:options="country_options"
-                            v-bind:label="'Your current origin country'"
+                            v-bind:label="'País de Origem'"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.origin_country"
                             :invalid_msg="required_field"
@@ -1345,7 +1301,7 @@ var add_assessment = new Vue ({
                             v-model="business_data.destin_country"
                             v-bind:select_id="'destin_country_select_id'"
                             v-bind:options="country_options"
-                            v-bind:label="'Destination Country'"
+                            v-bind:label="'País de Destino'"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.destin_country"
                             :invalid_msg="required_field"
@@ -1357,8 +1313,8 @@ var add_assessment = new Vue ({
                     <div class="bx--col" >
                         <text_area_standard
                             v-model="business_data.query_desc"
-                            v-bind:label="'Query Description (Only Related to Immigration/Tax/PWN)'"
-                            :placeholder="'Enter description here'"
+                            v-bind:label="'Qual é a sua dúvida? (Immigration/Tax/PWN)'"
+                            :placeholder="'Por favor insira sua dúvida aqui'"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.query_desc"
                             :invalid_msg="required_field"
@@ -1370,7 +1326,7 @@ var add_assessment = new Vue ({
                     <div class="bx--col" >
                         <checkbox_standard
                             v-model="business_data.query_type"
-                            v-bind:label="'Type of Query'"
+                            v-bind:label="'A qual assunto a sua pergunta está relacionada?'"
                             v-bind:options="checkbox_query_type"
                             v-bind:group_id="'query_type_option'"
                             v-bind:aria_labelledby="'query_type_aria'"
@@ -1383,7 +1339,7 @@ var add_assessment = new Vue ({
                         <input_date
                             style="margin-bottom: 6%; float: right; "
                             v-model="business_data.planned_start"
-                            v-bind:label="'Planned Start Date'"
+                            v-bind:label="'Data Planejada de Início'"
                             v-bind:mandatory="true"
                             :warning_message="warning.planned_start ? required_field : ''"
                             >
@@ -1391,63 +1347,25 @@ var add_assessment = new Vue ({
                         <input_date
                             v-model="business_data.planned_end"
                             style="float: right; padding-top: 8px;"
-                            v-bind:label="'Planned End Date'"
+                            v-bind:label="'Planejada de Fim'"
                             v-bind:mandatory="true"
                             :warning_message="warning.planned_end ? required_field : ''"
                             >
                         </input_date>
                     </div>
                 </div>
-                <div class="bx--row" style="padding-top:28px;">
-                    <div class="bx--col" >
-                        <radio_button_standard
-                            v-model="business_data.residency_status"
-                            v-bind:label="'Do you hold temporary/permanent work/residency status for the destination country (or) another country which you believe may impact your immigration requirements?'"
-                            v-bind:options="yes_no_options"
-                            v-bind:mandatory="false"
-                            v-bind:group_id="'residency_status_option'"
-                            v-bind:aria_labelledby="'residency_status_aria'"
-                            v-bind:invalid="warning.residency_status"
-                            :invalid_msg="required_field"
-                            >
-                        </radio_button_standard>
-                    </div>
-                </div>
-                <div class="bx--row" style="padding-top:16px;">
-                     <div class="bx--col" >
-                        <text_area_standard
-                            v-model="business_data.details_visa"
-                            :placeholder="'Enter details here'"
-                            v-bind:label="'Details of temporary / permanent work / residency status (Country, Visa Type, Validity etc), related to question above.'"
-                            >
-                        </text_area_standard>
-                    </div>
-                </div>
-                <div class="bx--row" style="padding-top:16px;">
-                    <div class="bx--col" >
-                        <checkbox_single
-                            :checkbox_id = "'query_pi_id'"
-                            v-model="business_data.query_pi"
-                            v-bind:option_label="checkbox_query_pi"
-                            v-bind:group_id="'query_type_option'"
-                            v-bind:aria_labelledby="'query_type_aria'"
-                            v-bind:warning="warning.query_pi"
-                            >
-                        </checkbox_single>
-                    </div>
-                </div>
                 <div class="bx--row" style="padding-top:16px; padding-bottom:32px;">
                      <div class= "bx--col">
                         <button_standard
                             theme="Primary"
-                            label="Submit"
+                            label="Enviar"
                             v-on:click.native="submit_data()"
                             style="float: right;">
                             >
                         </button_standard>
                         <button_standard
                             theme="tertiary"
-                            label="Cancel"
+                            label="Cancelar"
                             style="float: right; margin-right: 16px;"
                             @click.native="this.window.location='/my_assessments'"
                             >
@@ -1456,7 +1374,7 @@ var add_assessment = new Vue ({
                 </div>
             </div>
             <footer class="footer">
-                <a><img src="/static/images/IBM_logo_black.png"></a>
+                <a><img src=""></a>
             </footer>
             <notification_toast
                     :show="toast.show"

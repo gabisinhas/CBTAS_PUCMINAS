@@ -82,20 +82,18 @@ def user_roles(email=None, role=None):
         return jsonify({'status': 'Internal error'}), 500
 
 
-@access_management.route('/user-management/user/serial_number', methods=['GET'])
-@authentication_no_redirect
-def user_management():
-    try:
-        logging.info(">> user_management: Starting <<")
-
-        if "serial_number" in session:
-            return jsonify({'serial_number': session["serial_number"], "roles": session["roles"]}), 200
-
-        return jsonify({'status': 'No authorized'}), 401
-
-    except Exception as e:
-        logging.error("** user_management: exception ** ")
-        logging.exception(str(e))
-        return jsonify({'status': 'Internal error'}), 500
-
-
+# @access_management.route('/user-management/user/serial_number', methods=['GET'])
+# @authentication_no_redirect
+# def user_management():
+    # try:
+    #     logging.info(">> user_management: Starting <<")
+    #
+    #     if "serial_number" in session:
+    #         return jsonify({'serial_number': session["serial_number"], "roles": session["roles"]}), 200
+    #
+    #     return jsonify({'status': 'No authorized'}), 401
+    #
+    # except Exception as e:
+    #     logging.error("** user_management: exception ** ")
+    #     logging.exception(str(e))
+    #     return jsonify({'status': 'Internal error'}), 500

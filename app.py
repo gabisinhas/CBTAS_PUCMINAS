@@ -27,7 +27,7 @@ app.register_blueprint(access_management.access_management)
 @app.route('/', methods=['GET'])
 @security.authentication
 def index():
-    return render_template('index.html', env_type=os.getenv("ENV_TYPE"))
+    return render_template('home_createaccount.html', env_type=os.getenv("ENV_TYPE"))
 
 
 @app.route('/<module_name>', methods=['GET'])

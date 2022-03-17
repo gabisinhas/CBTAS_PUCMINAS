@@ -73,31 +73,31 @@ def assessment():
         return jsonify({'status': 'Internal error'}), 500
 
 
-@assessment_management.route('/assessment-management/user/', methods=['GET'])  # Get current logged user data
-@assessment_management.route('/assessment-management/user/<serial_number>', methods=['GET'])  # Get custom user data
-def assessment_user(serial_number=None):
-    try:
+#@assessment_management.route('/assessment-management/user/', methods=['GET'])  # Get current logged user data
+#@assessment_management.route('/assessment-management/user/<serial_number>', methods=['GET'])  # Get custom user data
+#def assessment_user(serial_number=None):
+#    try:
 
         # Get current logged user data
-        if request.method == 'GET' and serial_number is None:
-            employee_data = bluepages.get_person_data_include_manager(email=session["email"])
+#        if request.method == 'GET' and serial_number is None:
+#            employee_data = bluepages.get_person_data_include_manager(email=session["email"])
 
-            newco_user = False
-            if session["employeetype"] != "IBM":
-                newco_user = True
-            employee_data[1]["newco_user"] = newco_user
+#            newco_user = False
+#            if session["employeetype"] != "IBM":
+#                newco_user = True
+#            employee_data[1]["newco_user"] = newco_user
 
-            return jsonify(employee_data), 200
+#            return jsonify(employee_data), 200
 
         # Get custom user data
-        if request.method == 'GET' and serial_number is not None:
-            employee_data = bluepages.get_person_data_include_manager(serial_number=serial_number)
-            return jsonify(employee_data), 200
+#        if request.method == 'GET' and serial_number is not None:
+#            employee_data = bluepages.get_person_data_include_manager(serial_number=serial_number)
+#            return jsonify(employee_data), 200
 
-    except Exception as e:
-        logging.error("** assessment_user: exception ** ")
-        logging.exception(str(e))
-        return jsonify({'status': 'Internal error'}), 500
+#    except Exception as e:
+#        logging.error("** assessment_user: exception ** ")
+#        logging.exception(str(e))
+#        return jsonify({'status': 'Internal error'}), 500
 
 
 @assessment_management.route('/assessment-management/assessment/user/', methods=['GET'])

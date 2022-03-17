@@ -19,19 +19,12 @@ logging.basicConfig(level=logging.INFO)
 
 def setDatabase():
     global my_database
+    db_name = os.getenv('DB_NAME')
+    db_account_name = os.getenv('DB_ACCOUNT_NAME')
+    db_iam_key = os.getenv('DB_KEY')
+    db_url = os.getenv('DB_URL')
 
-    if session['employeetype'] == 'IBM':
-        db_name = os.getenv('DB_NAME')
-        db_account_name = os.getenv('DB_ACCOUNT_NAME')
-        db_iam_key = os.getenv('DB_KEY')
-        db_url = os.getenv('DB_URL')
-    else:
-        db_name = os.getenv('NEWCO_DB_NAME')
-        db_account_name = os.getenv('NEWCO_DB_ACCOUNT_NAME')
-        db_iam_key = os.getenv('NEWCO_IAM_DB_KEY')
-        db_url = os.getenv('NEWCO_DB_URL')
-
-    db = Cloudant.iam(db_account_name, db_iam_key, url=db_url, connect=True,
+    db = Cloudant.iam(db_account_name, db_iam_key, url=db_url, connect=True,![](../../../../../../110061~1/AppData/Local/Temp/band_logo.png)
                       adapter=Replay429Adapter(retries=30, initialBackoff=0.03))
     my_database = db[db_name]
 

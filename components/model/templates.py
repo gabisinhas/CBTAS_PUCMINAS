@@ -64,9 +64,9 @@ def template_notification(body_data={}):
                                   <p style='padding-left:32px; padding-top:32px; padding-bottom:24px; margin:0px; font-size: 16px;'> You can review the request details <a href="{assessment_link}"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-right:32px; margin:0px; padding-bottom:24px; font-size: 16px;'> For more tips on Cross Border Travel Assessment and resource on the navigation of the tool click   <a href="https://w3.ibm.com/w3publisher/cbta"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-bottom:24px; margin:0px;'>Regards, <br><b>Global Mobility,</b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href='globalimmigration@kyndryl.com'>globalimmigration@kyndryl.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href='globalimmigration@kyndryl.com'>globalimmigration@kyndryl.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href='globalmobilitytax@kyndryl.com'>globalmobilitytax@kyndryl.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href="globalimmigration@kyndryl.com">globalimmigration@kyndryl.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href="globalimmigration@kyndryl.com">globalimmigration@kyndryl.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href="globalmobilitytax@kyndryl.com">globalmobilitytax@kyndryl.com</a></b></p>
                                </td>
                                </tr>
                                </td>
@@ -158,9 +158,9 @@ def template_notification(body_data={}):
                                   <p style='padding-left:32px; padding-top:32px; padding-bottom:24px; margin:0px; font-size: 16px;'> You can review the request details <a href="{assessment_link}"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-right:32px; margin:0px; padding-bottom:24px; font-size: 16px;'> For more tips on Cross Border Travel Assessment and resource on the navigation of the tool click   <a href="https://w3.ibm.com/w3publisher/cbta"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-bottom:24px; margin:0px;'>Regards, <br><b>Global Mobility,</b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href='glosuppo@in.ibm.com'>glosuppo@in.ibm.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href='PWDcompliance@in.ibm.com'>PWDcompliance@in.ibm.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href='bttctlr@in.ibm.com'>bttctlr@in.ibm.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href="glosuppo@in.ibm.com">glosuppo@in.ibm.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href="PWDcompliance@in.ibm.com">PWDcompliance@in.ibm.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href="bttctlr@in.ibm.com">bttctlr@in.ibm.com</a></b></p>
                                </td>
                                </tr>
                                </td>
@@ -255,9 +255,9 @@ def template_notification_requester(body_data={}):
                                   <p style='padding-left:32px; padding-top:32px; padding-bottom:24px; margin:0px; font-size: 16px;'> You can review the request details <a href="{assessment_link}"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-right:32px; margin:0px; padding-bottom:24px; font-size: 16px;'> For more tips on Cross Border Travel Assessment and resource on the navigation of the tool click   <a href="https://w3.ibm.com/w3publisher/cbta"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-bottom:24px; margin:0px;'>Regards, <br><b>Global Mobility,</b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href='globalimmigration@kyndryl.com'>globalimmigration@kyndryl.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href='globalimmigration@kyndryl.com'>globalimmigration@kyndryl.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href='globalmobilitytax@kyndryl.com'>globalmobilitytax@kyndryl.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href="globalimmigration@kyndryl.com">globalimmigration@kyndryl.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href="globalimmigration@kyndryl.com">globalimmigration@kyndryl.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href="globalmobilitytax@kyndryl.com">globalmobilitytax@kyndryl.com</a></b></p>
                                </td>
                                </tr>
                                </td>
@@ -350,9 +350,9 @@ def template_notification_requester(body_data={}):
                                   <p style='padding-left:32px; padding-top:32px; padding-bottom:24px; margin:0px; font-size: 16px;'> You can review the request details <a href="{assessment_link}"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-right:32px; margin:0px; padding-bottom:24px; font-size: 16px;'> For more tips on Cross Border Travel Assessment and resource on the navigation of the tool click   <a href="https://w3.ibm.com/w3publisher/cbta"><b>here</b></a>.</p>
                                   <p style='padding-left:32px; padding-bottom:24px; margin:0px;'>Regards, <br><b>Global Mobility,</b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href='glosuppo@in.ibm.com'>glosuppo@in.ibm.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href='PWDcompliance@in.ibm.com'>PWDcompliance@in.ibm.com</a></b></p>
-                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href='bttctlr@in.ibm.com'>bttctlr@in.ibm.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Immigration support: <a href="glosuppo@in.ibm.com">glosuppo@in.ibm.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Posted worker compliance support : <a href="PWDcompliance@in.ibm.com">PWDcompliance@in.ibm.com</a></b></p>
+                                  <p style='padding-left:32px; padding-bottom:24px; margin:0px;'><b>Tax support : <a href="bttctlr@in.ibm.com">bttctlr@in.ibm.com</a></b></p>
                                </td>
                                </tr>
                                </td>
