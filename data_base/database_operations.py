@@ -10,11 +10,9 @@ from cloudant.document import Document
 # ---------------------------------------------------- #
 #                    Logging Setup                     #
 # ---------------------------------------------------- #
-from components.util.bluepages import nameByEmployeeEmail
+logging.basicConfig(level=logging.INFO)
 from components.util.tools import synchronized
 from data_base import partitions
-
-logging.basicConfig(level=logging.INFO)
 
 
 def setDatabase():
@@ -24,8 +22,8 @@ def setDatabase():
     db_iam_key = os.getenv('DB_KEY')
     db_url = os.getenv('DB_URL')
 
-    db = Cloudant.iam(db_account_name, db_iam_key, url=db_url, connect=True,![](../../../../../../110061~1/AppData/Local/Temp/band_logo.png)
-                      adapter=Replay429Adapter(retries=30, initialBackoff=0.03))
+    db = Cloudant.iam(db_account_name, db_iam_key, url=db_url, connect=True,
+                    adapter=Replay429Adapter(retries=30, initialBackoff=0.03))
     my_database = db[db_name]
 
 
@@ -212,26 +210,20 @@ def db_add_access_user(email):
 
         users = settings[0]['access']['users']
 
-        # 2. Valid IBM user
-        if nameByEmployeeEmail(email):
-
-            # 3. If the exist already
-            if email in users and email:
-                return 202
-            else:
-                # 4. Add the new user
-                access = settings[0]['access']
-                access['users'][email] = []
-
-                # 5. Save the doc
-                settings[0]['access'] = access
-                db_update(settings[0])
-
-                logging.info(msg="New user added: {0}".format(email))
-                return 200
+        # 3. If the exist already
+        if email in users and email:
+            return 202
         else:
-            return 204
+            # 4. Add the new user
+            access = settings[0]['access']
+            access['users'][email] = []
 
+            # 5. Save the doc
+            settings[0]['access'] = access
+            db_update(settings[0])
+
+            logging.info(msg="New user added: {0}".format(email))
+            return 200
         return True
 
     except Exception as e:
@@ -374,323 +366,6 @@ def db_remove_access_user_role(user, role):
     except Exception as e:
         logging.warning(msg="Getting removing user role exceptions: " + str(e))
         raise
-
-
-def db_add_subject_focal(country, email, subject):
-    """"This function will add a focal point to a country from a given subject"""
-    try:
-
-        # 1. Get country for the subject
-        country_data = db_search_selector({
-            "type": {
-                "$eq": "record-{subject}".format(subject=subject)
-            },
-            "country": {
-                "$eq": country
-            }
-        }, [])[0]
-
-        # 2. Add new focal to the subject/country
-        if email not in country_data['reviewer']:
-            country_data['reviewer'].append(email)
-
-        db_update(country_data)
-
-        logging.info(msg="Subject focal point added: {0}".format(email))
-
-        return True
-
-    except Exception as e:
-        logging.warning(msg="Subject focal point add exceptions: " + str(e))
-        raise
-
-
-def db_remove_subject_focal(country, email, subject):
-    """"This function will remove a focal point from a country"""
-    try:
-
-        # 1. Get countries list
-        country_data = db_search_selector({
-            "type": {
-                "$eq": "record-{subject}".format(subject=subject)
-            },
-            "country": {
-                "$eq": country
-            }
-        }, [])[0]
-
-        # 2. Remove focal from a subject/country
-        if email in country_data['reviewer']:
-            country_data['reviewer'].remove(email)
-            db_update(country_data)
-
-        logging.info(msg="Subject focal point removed: {0}".format(email))
-
-        return True
-
-    except Exception as e:
-        logging.warning(msg="Subject focal point remove exceptions: " + str(e))
-        raise
-
-
-def db_add_subject_country(country=None, subject=None):
-    try:
-        logging.info(">> db_add_subject_country: Starting <<")
-
-        country_name_split = country['country'].split(" ")
-        country_name_parsed = ""
-        for idx, word in enumerate(country_name_split):
-            if idx == 0:
-                country_name_parsed += word.lower().capitalize()
-            else:
-                country_name_parsed += " " + word.lower().capitalize()
-
-        country['country'] = country_name_parsed
-
-        # 1. Check if the country exist for this subject already
-        data = db_search_selector({
-            "type": {
-                "$eq": "record-{subject}".format(subject=subject)
-            },
-            "country": {
-                "$eq": country["country"]
-            }
-        }, [])
-
-        if len(data) > 0:
-            return [202, None]
-
-        # 2. Create the document for the new country
-        # 2.a Special condition for country fencing
-
-        if subject == "country-fencing":
-            # 2.a.1 Define the template data
-            cf_entity_template = {
-                "home": {
-                    "international_assignment": {
-                        "initiation": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        },
-                        "extension": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        }
-                    },
-                    "global_international_assignment": {
-                        "initiation": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        },
-                        "extension": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        }
-                    },
-                    "global_relocation": {
-                        "initiation": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        },
-                        "extension": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        }
-                    }
-                },
-                "host": {
-                    "international_assignment": {
-                        "initiation": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        },
-                        "extension": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        }
-                    },
-                    "global_international_assignment": {
-                        "initiation": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        },
-                        "extension": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        }
-                    },
-                    "global_relocation": {
-                        "initiation": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        },
-                        "extension": {
-                            "min_duration": 0,
-                            "max_duration": 0,
-                            "band_restriction": None,
-                            "funding_restriction": None,
-                            "country_nationality_restriction": None,
-                            "other_restriction": None,
-                            "approver_name": None,
-                            "approver_id": None,
-                            "comments": None,
-                            "message": None
-                        }
-                    }
-                }
-            }
-
-            # 2.a.2 Add the mandatory/default template
-            business_data = {"all": cf_entity_template}
-
-            # 2.a.3 Add the specific entities if exists
-            for item in country["entities"]:
-                business_data[item["entity_id"] + " - " + item["entity_name"]] = cf_entity_template
-
-            country["business_data"] = business_data
-            del country["entities"]
-
-        # 2.b Common fields
-        country["type"] = "record-{subject}".format(subject=subject)
-        country["follow_up_count"] = 0
-        country["review_year"] = country['review_date'].split('-')[0] if 'review_date' in country else None
-        country["history"] = []
-        country["changed"] = False
-
-        if "review_date" not in country:
-            country["review_date"] = str(datetime.datetime.today().strftime('%Y-%m-%d'))
-            country["date_time"] = str(datetime.datetime.now())
-            country["review_year"] = country['review_date'].split('-')[0]
-            country["review_status"] = "outdated"
-
-        # 3. Add the document for the new country on database
-        db_create(doc=country)
-
-        logging.info(">> db_add_subject_country: Country: {0}, Region: {1} added <<".format(country['country'],
-                                                                                    country['region']))
-
-        return [200, country['country']]
-
-    except Exception as e:
-        logging.warning(msg="** db_add_subject_country exceptions **" + str(e))
-        raise
-
-
-def db_removed_subject_country(country=None, subject=None):
-    try:
-        logging.info(">> db_removed_subject_country: Starting <<")
-
-        # 1. Get the settings document
-        data = db_search_selector({
-            "type": {
-                "$eq": "record-{subject}".format(subject=subject)
-            },
-            "country": {
-                "$eq": country
-            }
-        }, [])
-
-        if len(data) > 0:
-            # 2. Remove the document for the country on database
-            db_delete_by_id(doc_id=data[0]['_id'])
-            return 200
-
-        logging.info(">> db_removed_subject_country: Country: {0} has been removed successfully <<".format(country))
-
-        return 202  # Nothing to do
-
-    except Exception as e:
-        logging.warning(msg="** db_removed_subject_country exceptions **" + str(e))
-        raise
-
 
 def db_get_user_roles(email):
     """"This function will return user roles"""

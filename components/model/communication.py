@@ -6,7 +6,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email import encoders
 from components.security import user_session
-from components.util import bluepages as bp
 
 
 def send_blue_mail(sender=None, recipients=None, recipient_cc=None, subject=None, body=None):

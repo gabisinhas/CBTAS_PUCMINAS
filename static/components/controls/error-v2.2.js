@@ -20,7 +20,7 @@ var index = new Vue ({
     methods:{
         get_permission(){
            axios
-           .get('/user-management/user/serial_number')
+           .get('/user-management/user/cpf')
                 .then(response => {
                     if(response.data.roles == "admin") this.admin = true;
                 })
@@ -58,13 +58,13 @@ var index = new Vue ({
                         </div>
                     </div>
                 <!-- Personal Details Section -->
-                <div class="bx--row" style="padding-top:48px; padding-bottom: 25%;">
+                <div class="bx--row" style="padding-top:48px; padding-bottom:19%;">
                     <div class="bx--col" >
                         <div class="bx--row" style="margin-right: unset; margin-left: unset;">
                             <div class="bx--col" >
-                                <h4 style="font-size: 0.925rem;font-weight: 300;line-height: 2.4; padding-bottom: 10px;">
-                                    Something went wrong. Please contact the administrator.
-                                </h4>
+                                <h3 style="font-size: 1.525rem;font-weight: 400;line-height: 2.4; padding-bottom: 10px;">
+                                    Algum erro ocorreu. Por favor contate seu administrador.
+                                </h3>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@ var index = new Vue ({
 
             </div>
             <footer class="footer">
-                <a><img src="/static/images/IBM_logo_black.png"></a>
+                <p>Precisa de ajuda ? Entre em contato conosco.</p>
             </footer>
         </div>
       `

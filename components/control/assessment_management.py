@@ -9,7 +9,6 @@ from data_base.database_operations import db_search_selector, db_get_all_by_part
 from components.security.security_management import authentication
 import components.model.assessment as assessment_model
 import data_base.model as data_model
-import components.util.bluepages as bluepages
 import logging
 import components.model.access as access
 import data_base.database_operations as database
@@ -35,11 +34,6 @@ def assessment():
             if request.json: # Validate if the request has content in the body as JSON
 
                 new_assessment = request.json
-
-                # Define the Support Owner
-                support_contact = access.get_assessment_support(type_query=new_assessment['query_type'])
-
-                new_assessment['support_contact'] = support_contact
 
                 # Add assessment
                 code_result, result = assessment_model.add_assessment(assessment=new_assessment)
@@ -71,101 +65,6 @@ def assessment():
         logging.error("** assessment: exception ** ")
         logging.exception(str(e))
         return jsonify({'status': 'Internal error'}), 500
-
-
-#@assessment_management.route('/assessment-management/user/', methods=['GET'])  # Get current logged user data
-#@assessment_management.route('/assessment-management/user/<serial_number>', methods=['GET'])  # Get custom user data
-#def assessment_user(serial_number=None):
-#    try:
-
-        # Get current logged user data
-#        if request.method == 'GET' and serial_number is None:
-#            employee_data = bluepages.get_person_data_include_manager(email=session["email"])
-
-#            newco_user = False
-#            if session["employeetype"] != "IBM":
-#                newco_user = True
-#            employee_data[1]["newco_user"] = newco_user
-
-#            return jsonify(employee_data), 200
-
-        # Get custom user data
-#        if request.method == 'GET' and serial_number is not None:
-#            employee_data = bluepages.get_person_data_include_manager(serial_number=serial_number)
-#            return jsonify(employee_data), 200
-
-#    except Exception as e:
-#        logging.error("** assessment_user: exception ** ")
-#        logging.exception(str(e))
-#        return jsonify({'status': 'Internal error'}), 500
-
-
-@assessment_management.route('/assessment-management/assessment/user/', methods=['GET'])
-def user_assessments():
-    """Retrieve current user assessment requests"""
-
-    logging.info(">>user_assessments: Starting<<")
-
-    try:
-        code, result = assessment_model.get_user_owned_assessment(ibm_user_serial=session["serial_number"])
-
-        return jsonify(result), code
-
-    except Exception as e:
-        logging.error("** user_assessments: exception ** ")
-        logging.exception(str(e))
-        return jsonify({'status': 'Internal error'}), 500
-
-
-@assessment_management.route('/assessment-management/assessment/admin/', methods=['GET'])
-@authentication
-def request_all_assessment_data():
-    """See all the assessment on the DB"""
-
-    try:
-        logging.info(">> assessment_management_admin: Starting << ")
-        # 1. Define database query to retrieve the overall assessment data
-        code, result = assessment_model.get_assessments() # []
-        newco_user = False
-        if session["employeetype"] != "IBM":
-            newco_user = True
-        new_result = {
-            'assessments': result,
-            'newco_user': newco_user
-        }
-        # 2. Return the data
-        logging.info(">> assessment_management_admin: finished << ")
-        return jsonify(new_result), code
-    except Exception as e:
-        logging.error("** assessment_management_permission: exception ** ")
-        logging.exception(str(e))
-        resp = jsonify({'message': 'Internal error in the resource, please contact the administrator.'})
-        return resp, 500
-
-
-@assessment_management.route('/assessment-management/assessment/admin/<assessment_id>', methods=['GET'])
-@authentication
-def view_assessment(assessment_id=None):
-    """See the assessment on the DB"""
-
-    # Define database query to retrieve the overall assessment data
-    try:
-        logging.info(">> view_assessment_admin: Starting << ")
-
-        if request.method == 'GET' and assessment_id is not None:
-            assessment_id = "assessment:{key}".format(key=assessment_id)
-            result = db_select_by_id(doc_id=assessment_id)
-            newco_user = False
-            if session["employeetype"] != "IBM":
-                newco_user = True
-            result["newco_user"] = newco_user
-            return jsonify(result), 200
-
-    except Exception as e:
-        logging.error("** view_assessment_admin: exception ** ")
-        logging.exception(str(e))
-        return jsonify({'status': 'Internal error'}), 500
-
 
 @assessment_management.route('/assessment-management/assessment/<id>/attachment', methods=['POST', 'PUT'])
 @assessment_management.route('/assessment-management/assessment/<id>/attachment/<file_name>', methods=['GET'])

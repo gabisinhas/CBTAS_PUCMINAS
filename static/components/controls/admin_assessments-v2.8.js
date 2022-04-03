@@ -48,24 +48,23 @@ var admin_assessments = new Vue ({
 
         // Business data control
         business_data:{
-            serial_number:'',
-            first_name:'',
+            cpf:'',
+            nome:'',
             last_name:'',
             email:'',
-            phone:'',
-            nationality:'',
-            bus_unit:'',
+            cellphone:'',
+            nacionalidade:'',
+            unidadeneg:'',
             project_dept: '',
             email_copy: '',
-            cbta_question:'',
+            cbta_question:"No",
             origin_country:'',
             destin_country:'',
-            query_type:'',
+            query_type:[],
             query_desc:'',
             planned_start:'',
             planned_end:'',
-            residency_status:'',
-            details_visa:''
+            status: "Opened",
         },
 
         // Default components data options

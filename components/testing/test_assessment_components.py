@@ -4,8 +4,7 @@ import components.model.assessment as assessment
 def test_add_assessment():
     # 1. define object
     test_object = {
-        "employee_id": "099541631",
-        "employee_first_name": "Tarcisio",
+        "nome": "Gabriela",
         "business_unit": "CIO"
     }
 

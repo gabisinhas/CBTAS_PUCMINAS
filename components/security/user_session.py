@@ -7,12 +7,10 @@ def get_user_session():
     if os.getenv("ENV_TYPE") == "local":
         # Scenario for local development environment
         return {
-            "email": "tfc@br.ibm.com",
-            "roles": None
+            "email": "gabsanto@br.ibm.com",
         }
     else:
         # Scenario for cloud environment
         return {
             "email": session["email"],
-            "roles": session["roles"]
         }

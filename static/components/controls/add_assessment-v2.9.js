@@ -18,13 +18,13 @@ var add_assessment = new Vue ({
             subtitle: ''
         },
         business_data:{
-            serial_number:'',
-            first_name:'',
+            cpf:'',
+            nome:'',
             last_name:'',
             email:'',
-            phone:'',
-            nationality:'',
-            bus_unit:'',
+            cellphone:'',
+            nacionalidade:'',
+            unidadeneg:'',
             project_dept: '',
             email_copy: '',
             cbta_question:"No",
@@ -34,19 +34,15 @@ var add_assessment = new Vue ({
             query_desc:'',
             planned_start:'',
             planned_end:'',
-            residency_status:"No",
-            details_visa:'',
-            query_pi: false,
             status: "Opened",
-            comments: ""
         },
         attachments: {},
         warning:{
-            serial_number: false,
-            first_name: false,
+            cpf: false,
+            nome: false,
             last_name: false,
             email: false,
-            nationality: false,
+            nacionalidade: false,
             cbta_question: false,
             origin_country: false,
             destin_country: false,
@@ -1054,25 +1050,6 @@ var add_assessment = new Vue ({
             }
         },
 
-//        get_user_data: function(){
-//
-//            // Call current user data
-//            this.loading.initial = true;
-//            axios.
-//                get('/assessment-management/user/'+this.business_data.serial_number).
-//                then(response =>{
-//                    // Populate user data
-//                    this.business_data.employee_id = response.data[1]['serial_number'];
-//                    this.business_data.first_name = response.data[1]['first_name'];
-//                    this.business_data.last_name = response.data[1]['last_name'];
-//                    this.business_data.email = response.data[1]['mail'];
-//                    this.business_data.bus_unit = response.data[1]['bus_unit'];
-//                    this.business_data.people_manager_email = response.data[1]['manager_email'];
-//                    this.business_data.manager_name = response.data[1]['manager_name'];
-//                    this.loading.initial = false;
-//                })
-//        },
-
         closeButtonOverlayHandler: function (e) {
             if (this.overlay.close_btn_action == 'success') {
                 window.location = "/my_assessments";
@@ -1153,11 +1130,10 @@ var add_assessment = new Vue ({
                     <!-- Personal Details Fields -->
                    <div class="bx--col">
                         <text_input_standard
-                            v-model="business_data.serial_number"
+                            v-model="business_data.cpf"
                             v-bind:label="'CPF'"
                             v-bind:mandatory="true"
-                            v-on:change.native="get_user_data()"
-                            v-bind:invalid="warning.serial_number"
+                            v-bind:invalid="warning.cpf"
                             :invalid_msg="required_field"
                             >
                         </text_input_standard>
@@ -1168,11 +1144,10 @@ var add_assessment = new Vue ({
                 <div class="bx--row" style="padding-top:16px;">
                     <div class="bx--col" >
                         <text_input_standard
-                            v-model="business_data.first_name"
+                            v-model="business_data.nome"
                             v-bind:label="'Nome'"
-                            v-bind:readonly="true"
                             v-bind:mandatory="true"
-                            v-bind:invalid="warning.first_name"
+                            v-bind:invalid="warning.nome"
                             :invalid_msg="required_field"
                             >
                         </text_input_standard>
@@ -1181,7 +1156,6 @@ var add_assessment = new Vue ({
                         <text_input_standard
                             v-model="business_data.last_name"
                             v-bind:label="'Sobrenome'"
-                            v-bind:readonly="true"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.last_name"
                             :invalid_msg="required_field"
@@ -1194,7 +1168,6 @@ var add_assessment = new Vue ({
                         <text_input_standard
                             v-model="business_data.email"
                             v-bind:label="'email'"
-                            v-bind:readonly="true"
                             v-bind:mandatory="true"
                             v-bind:invalid="warning.email"
                             :invalid_msg="required_field"
@@ -1203,7 +1176,7 @@ var add_assessment = new Vue ({
                     </div>
                     <div class="bx--col" >
                         <text_input_standard
-                            v-model="business_data.phone"
+                            v-model="business_data.cellphone"
                             v-bind:label="'Telefone de Contato#'"
                             >
                         </text_input_standard>
@@ -1212,19 +1185,19 @@ var add_assessment = new Vue ({
                 <div class="bx--row" style="padding-top:16px;">
                     <div class="bx--col" >
                         <select_common
-                            v-model="business_data.nationality"
+                            v-model="business_data.nacionalidade"
                             v-bind:select_id="'nationality_select_id'"
                             v-bind:options="country_options"
                             v-bind:label="'Nacionalidade'"
                             v-bind:mandatory="true"
-                            v-bind:invalid="warning.nationality"
+                            v-bind:invalid="warning.nacionalidade"
                             :invalid_msg="required_field"
                         >
                         </select_common>
                     </div>
                      <div class="bx--col" >
                         <text_input_standard
-                             v-model="business_data.bus_unit"
+                             v-model="business_data.unidadeneg"
                              v-bind:label="'Unidade de Negócio'"
                              >
                         </text_input_standard>
@@ -1367,7 +1340,7 @@ var add_assessment = new Vue ({
                             theme="tertiary"
                             label="Cancelar"
                             style="float: right; margin-right: 16px;"
-                            @click.native="this.window.location='/my_assessments'"
+                            @click.native="this.window.location='/home_page'"
                             >
                         </button_standard>
                      </div>

@@ -7,7 +7,6 @@ from components.model.access import get_user_roles
 from data_base.database_operations import db_get_user_roles, db_get_settings
 import logging
 import os
-from components.util.bluepages import personDataByEmail
 
 # --- Import for OIDC --- #
 from functools import wraps
@@ -83,9 +82,9 @@ def authentication(f):
                 # 2. In case of dev environment
                 if env_type == "local":
                     session["code"] = "dev env"
-                    session["email"] = "tfc@br.ibm.com"
+                    session["email"] = "gabsanto@br.ibm.com"
                     session["roles"] = db_get_user_roles(session["email"])
-                    session["serial_number"] = personDataByEmail(email="tfc@br.ibm.com")["serialnumber"]
+                    session["serial_number"] = personDataByEmail(email="gabsanto@br.ibm.com")["serialnumber"]
                     session["policy_email"] = db_get_settings()["policy_email"]
                     return f(*args, **kwargs)
                 # 3. In case no user session redirect to login
@@ -181,8 +180,8 @@ def login():
         # 2. In case of dev environment
         if env_type == "local":
             session["code"] = "dev env"
-            session["email"] = "tfc@br.ibm.com"
-            session["serial_number"] = personDataByEmail(email="tfc@br.ibm.com")["serialnumber"]
+            session["email"] = "gabsanto@br.ibm.com"
+            session["serial_number"] = personDataByEmail(email="gabsanto@br.ibm.com")["serialnumber"]
             session['employeetype'] = 'NEWCO'
             session["roles"] = get_user_roles(session["email"])
             return Redirect("/")

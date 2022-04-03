@@ -4,7 +4,6 @@ import os
 from data_base import partitions
 from data_base.database_operations import db_search_selector, db_update
 import logging
-from components.util import bluepages as bp
 from flask import session
 import data_base.database_operations as database
 
@@ -239,64 +238,5 @@ def remove_application_level_user_role(email, role):
     except Exception as e:
         logging.warning(msg="remove_application_level_user_role - exception: " + str(e))
         return 500
-
-
-def user_validation(email=None):
-    """This component validates the if the user is valid IBM
-        employee and which roles can be assigned """
-
-    # 1. Get the application roles
-    roles = get_roles_details()
-    code = 204
-    roles_filtered = []
-
-    # 2. Validate if it is a valid IBM id
-    person_data = bp.get_person_data_via_email(email)
-    if person_data is None:
-        return [204, [], None]
-    else:
-        # 3. Define user blue pages profile flags
-        manager_flag = bp.is_manager_with_flag(email)[0]
-        manager_employees = bp.is_manager_with_employee(email)[0]
-        in_country = True if session["country_code"] == person_data['employeecountrycode'] else False
-        # in_country = True if person_data['employeecountrycode'] == '897' else False
-
-        # 4. Validate user profile against roles parameters
-        for key, value in roles.items():
-            if value['mandatory_parameters']['manager_flag'] == True and manager_flag != True:
-                continue
-
-            if value['mandatory_parameters']['manager_employees'] == True and manager_employees != True:
-                continue
-
-            if value['mandatory_parameters']['in_country'] == True and in_country != True:
-                continue
-
-            code = 200
-            roles_filtered.append(key)
-
-    return [code, roles_filtered, person_data['callupname']]
-
-
-def get_assessment_support(type_query=None):
-
-    # 0. Parse type_query
-    if type(type_query) is str:
-        type_query = [type_query]
-
-    # 1. Get settings document from the database
-    settings = database.db_get_all_by_partition("settings")[0]
-
-    # 2. From this document get the list of support contacts
-    support_contacts = settings["support_contacts"]
-
-    # 3. Iterate the type_query list and get the support contact for each entry
-    support_contact_data = {}
-
-    for item in type_query:
-        support_contact_data[item] = support_contacts[item]
-
-    # 4. Return the support contact
-    return support_contact_data
 
 

@@ -7,7 +7,6 @@ import data_base.partitions as partitions
 import components.security.user_session as user_session
 from components.model import communication
 from components.model.templates import template_notification, template_notification_requester
-from components.util import bluepages
 
 
 def add_assessment(assessment=None):
@@ -27,10 +26,11 @@ def add_assessment(assessment=None):
 
         # 3. Add control data
         assessment['created_date'] = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-        assessment['created_by'] = user_session.get_user_session()['email']
+#       assessment['created_by'] = user_session.get_user_session()['email']
 
         # 4. Add the object in the database
-        result = database.db_create(doc=assessment, partition="assessment")
+        result = database.db_create(doc=assessment, partition=None)
+#       result = database.db_create(doc=assessment, partition="assessment")
 
         # 5. Return result
         if result['status'] is True:
@@ -65,26 +65,7 @@ def add_assessment(assessment=None):
                                          subject=subject,
                                          body=body)
 
-            support_contact_sent = []
-            for area, contacts in assessment["support_contact"].items():
 
-                for contact in contacts:
-
-                    # Email notification to support team
-                    #person = bluepages.get_person_data_via_email(contact)
-
-                    #if 'preferredfirstname' in person:
-                    if contact not in support_contact_sent:
-                        body, subject = template_notification(body_data=body_data)
-
-                        communication.send_blue_mail(sender=os.getenv("TOOL_MAIL"),
-                                                     recipients=[contact],
-                                                     subject=subject,
-                                                     body=body)
-
-                        support_contact_sent.append(contact)
-
-            return [200, {'_id': result['_id'], 'assessment_id': assessment_id}]
 
         return [500, None]
 

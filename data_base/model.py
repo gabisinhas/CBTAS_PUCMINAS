@@ -9,13 +9,13 @@ TRACK_ACTION_UPDATE_CALENDAR_PUBLISH = "Publish Calendar"
 TRACK_ACTION_UPDATE_CALENDAR_DUPLICATE = "Duplicate Calendar"
 
 ASSESSMENT_ENTITY = {
-    "serial_number": '',
-    "first_name": '',
+    "cpf": '',
+    "nome": '',
     "last_name": '',
     "email": '',
-    "phone": '',
-    "nationality": '',
-    "bus_unit": '',
+    "cellphone": '',
+    "nacionalidade": '',
+    "unidadeneg": '',
     "project_dept": '',
     "email_copy": '',
     "cbta_question": '',
@@ -25,6 +25,4 @@ ASSESSMENT_ENTITY = {
     "query_desc": '',
     "planned_start": '',
     "planned_end": '',
-    "residency_status": '',
-    "details_visa": ''
 }

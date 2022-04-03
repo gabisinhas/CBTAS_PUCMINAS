@@ -13,7 +13,7 @@ export var header_standard = {
     },
     beforeCreate() {
        axios
-       .get('/user-management/user/serial_number')
+       .get('/user-management/user/cpf')
             .then(response => {
                 this.serial_number = response.data.serial_number;
                 if(response.data.roles == "admin") this.role_admin = true;
@@ -112,7 +112,7 @@ export var header_standard = {
                             </a>
                           </li>
                           <li role="none" v-show="serial_number == ''">
-                            <a href="/security/login" class="bx--header__menu-item" tabindex="-1">
+                            <a href="/login_page" class="bx--header__menu-item" tabindex="-1">
                               <span class="bx--text-truncate--end">
                                 Login
                               </span>

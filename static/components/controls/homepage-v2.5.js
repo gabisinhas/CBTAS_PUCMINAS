@@ -22,7 +22,7 @@ var index = new Vue ({
     methods:{
         get_permission(){
            axios
-           .get('/user-management/user/serial_number')
+           .get('/user-management/user/cpf')
                 .then(response => {
                     if(response.data.roles == "admin") this.admin = true;
                 })
@@ -60,15 +60,15 @@ var index = new Vue ({
                         </div>
                     </div>
                 <!-- Personal Details Section -->
-                <div class="bx--row" style="padding-top:48px; padding-bottom: 25%;">
+                <div class="bx--row" style="padding-top:5px; padding-bottom: 2%;">
                     <div class="bx--col" >
                         <div class="bx--row" style="margin-right: unset; margin-left: unset;">
                             <div class="bx--col" >
                                 <h1 style="font-size: 2.625rem; font-weight: 300;">
-                                    Welcome!
+                                    Bem vindo !!!
                                 </h1>
-                                <h4 style="font-size: 0.925rem;font-weight: 300;line-height: 2.4; padding-bottom: 10px;">
-                                    Create a Trip Query Form request or check your existing ones.
+                                <h4 style="font-size: 1.425rem;font-weight: 300;line-height: 2.4; padding-bottom: 10px;">
+                                    Crie um novo formulário ou Consulte formulários já criados
                                 </h4>
                             </div>
                         </div>
@@ -76,11 +76,11 @@ var index = new Vue ({
                             <div class="bx--col" style="text-align: center;">
                                 <button id="tooltip_cf" class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-start"
                                   data-tooltip-icon
-                                  @click="this.window.location='/add_assessment'"
+                                  @click="this.window.location='/create_new_form'"
                                   >
                                   <img src="/static/images/new_request_button.svg"/>
                                 </button>
-                                <button  style="padding-left: 38px;" id="tooltip_cf" class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-start"
+                                <button  style="padding-left: 38px;padding-bottom: 28px;" id="tooltip_cf" class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-start"
                                   data-tooltip-icon
                                   @click="this.window.location='/my_assessments'"
                                   >
@@ -96,11 +96,11 @@ var index = new Vue ({
                         </div>
                     </div>
                 </div>
-
-            </div>
-            <footer class="footer">
-                <a><img src="/static/images/IBM_logo_black.png"></a>
+                           <footer class="footer">
+                <p>Precisa de ajuda ? Entre em contato conosco.</p>
             </footer>
+            </div>
+
         </div>
       `
 })
