@@ -6,7 +6,7 @@ from components.model import communication
 from components.model.templates import template_notification, template_notification_requester
 from data_base import partitions
 from data_base.database_operations import db_search_selector, db_get_all_by_partition, db_select_by_id
-from components.security.security_management import authentication
+#from components.security.security_management import authentication
 import components.model.assessment as assessment_model
 import data_base.model as data_model
 import logging

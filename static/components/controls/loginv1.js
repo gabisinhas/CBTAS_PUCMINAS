@@ -89,7 +89,7 @@ var user_register = new Vue ({
                 <div class="bx--row" style="padding-top:5px; padding-bottom: 16px;">
                     <div class="bx--col" style="margin-left: auto; margin-right: auto;">
                         <img src="/static/images/details_black.png" style="float:left; vertical-align: bottom; padding-top:3px;"/>
-                        <h3 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Login do Usuário</h3>
+                        <h3 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Entrar</h3>
                     </div>
                 </div>
                 <div class="bx--row" style="padding-top:16px">
@@ -124,7 +124,17 @@ var user_register = new Vue ({
                          <button_standard
                             style="background-color: #00bfff; font-weight: bold; text-align: center;"
                             v-model="login_data.login"
-                            v-bind:label="'Entrar'"
+                            v-bind:label="'Login'"
+                            v-bind:mandatory="true"
+                            :invalid_msg="required_field"
+                            >
+                         </button_standard>
+                    </div>
+                    <div class="bx--col--2" style="padding-left:15px;padding-right:150px;margin-right:px">
+                         <button_standard
+                            style="background-color: #00bfff; font-weight: bold; text-align: center;"
+                            v-model="login_data.login"
+                            v-bind:label="'Logar com o Google'"
                             v-bind:mandatory="true"
                             :invalid_msg="required_field"
                             >
@@ -135,7 +145,7 @@ var user_register = new Vue ({
                     <div class="bx--col"></div>
                 </div>
                 <!-- Personal Details Section -->
-                <div class="bx--row" style="padding-top:10px; padding-bottom: 5%;">
+                <div class="bx--row" style="padding-top:20px; padding-bottom: 5%;">
                     <div class="bx--col" >
                         <div class="bx--row" style="margin-right: 30%; margin-left: 5%; margin-top:px;">
                             <div class="bx--col--2" style="text-align: center;">

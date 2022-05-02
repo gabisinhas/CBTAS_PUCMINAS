@@ -17,6 +17,9 @@ var add_assessment = new Vue ({
             title: '',
             subtitle: ''
         },
+        //business_data:{
+        //'nome': 'Gabriela'
+        //}
         business_data:{
             cpf:'',
             nome:'',
@@ -1332,7 +1335,7 @@ var add_assessment = new Vue ({
                         <button_standard
                             theme="Primary"
                             label="Enviar"
-                            v-on:click.native="submit_data()"
+                            v-on:click.native="login()"
                             style="float: right;">
                             >
                         </button_standard>
