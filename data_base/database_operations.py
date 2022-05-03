@@ -14,7 +14,6 @@ logging.basicConfig(level=logging.INFO)
 from components.util.tools import synchronized
 from data_base import partitions
 
-
 def setDatabase():
     global my_database
     db_name = os.getenv('DB_NAME')
@@ -411,7 +410,7 @@ def db_select_count_by_period(start_date, end_date, index_name, count_field):
     setDatabase()
     design_doc = '_design/dashboard'
 
-    if start_date is '' and end_date is '':
+    if start_date == '' and end_date == '':
         date_filter = '*:*'
     else:
         date_filter = 'review_date:["{start_date}" TO "{end_date}"]'.format(start_date=start_date,
