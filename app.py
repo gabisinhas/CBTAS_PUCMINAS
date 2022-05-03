@@ -12,7 +12,7 @@ from auth_decorator import login_required
 app = Flask(__name__)
 
 # Session config
-app.secret_key = os.getenv('SESSION_SECRET')
+app.secret_key = os.getenv('SESSION_SECRET',)
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
@@ -20,8 +20,8 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
-    client_id='791794379854-5u8a2u80tcht2p1vm42rfbeiuf29s1rb.apps.googleusercontent.com',
-    client_secret='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',
+    client_id='GOOGLE_CLIENT_ID',
+    client_secret='GOOGLE_CLIENT_SECRET',
     access_token_url='https://accounts.google.com/o/oauth2/token',
     access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
