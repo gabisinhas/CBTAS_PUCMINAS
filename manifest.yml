@@ -1,5 +1,0 @@
----
-applications:
- - name: cbtas-pucminas
-   random-route: true
-   memory: 128M
