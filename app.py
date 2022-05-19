@@ -1,70 +1,120 @@
-# --- Main imports --- #
-from flask import Flask, redirect, url_for, session
-from authlib.integrations.flask_client import OAuth
-import os
+from functools import wraps
+import pathlib
+import requests
+from google.oauth2 import id_token
+from google_auth_oauthlib.flow import Flow
+from pip._vendor import cachecontrol
+import google.auth.transport.requests
+from os import abort
+import logging
+from flask import Flask, redirect, session, request, render_template, url_for
 from datetime import timedelta
+import os
 
-# decorator for routes that should be accessible only by logged in users
-from auth_decorator import login_required
-
-
-# APP Flask Setup
 app = Flask(__name__)
+app.secret_key = 'Session_Secret'
+app.permanent_session_lifetime = timedelta(hours=10)
+app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['JSON_SORT_KEYS'] = False
+env_type = os.getenv("ENV_TYPE")
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
 
-# Session config
-app.secret_key = os.getenv('SESSION_SECRET',)
-app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
+env_type = os.getenv("ENV_TYPE")
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
 
-# oAuth Setup
-oauth = OAuth(app)
-google = oauth.register(
-    name='google',
-    client_id='GOOGLE_CLIENT_ID',
-    client_secret='GOOGLE_CLIENT_SECRET',
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    access_token_params=None,
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
-    api_base_url='https://www.googleapis.com/oauth2/v1/',
-    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
-    client_kwargs={'scope': 'openid profile email'},
+GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID"  #enter your client id you got from Google console
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")  #set the path to where the .json file you got Google console is
+
+flow = Flow.from_client_secrets_file(  #Flow is OAuth 2.0 a class that stores all the information on how we want to authorize our users
+    client_secrets_file=client_secrets_file,
+    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],  #here we are specifing what do we get after the authorization
+    redirect_uri="http://127.0.0.1:5000/callback"  #and the redirect URI is the point where the user will end up after the authorization
 )
 
+def authentication(f):  #a function to check if the user is authorized or not
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        logging.info(">> authentication validation <<")
+        try:
+            # 1. Check if the session is available
+            if "google_id" in session:
+                return wrapper
+            else:
+                # 2. In case of dev environment
+                if env_type == "local":
+                    session["code"] = "dev env"
+                    session["email"] = "gabisinhas.santos@gmail.com.br"
+                    return wrapper
+                # 3. In case no user session redirect to login
+            return redirect(url_for("security/login", full_path=request.full_path.replace(request.url_root, '')))
 
-@app.route('/')
-@login_required
-def hello_world():
-    email = dict(session)['profile']['email']
-    return f'Hello, {email}!'
+        except Exception as e:
+            logging.info(">> authentication error: " + str(e))
+            return redirect('/error')
+
+    return wrapper
 
 
-@app.route('/login')
+@app.route("/login", methods=['GET', 'POST'])  #the page where the user can login
 def login():
-    google = oauth.create_client('google')
-    redirect_uri = url_for('authorize', _external=True)
-    return google.authorize_redirect(redirect_uri)
+    authorization_url, state = flow.authorization_url()  #asking the flow class for the authorization (login) url
+    session["state"] = state
+    return redirect(authorization_url)
 
 
-@app.route('/authorize')
-def authorize():
-    google = oauth.create_client('google')
-    token = google.authorize_access_token()
-    resp = google.get('userinfo')
-    user_info = resp.json()
-    user = oauth.google.userinfo()
-    # do something with the token and profile
-    session['profile'] = user_info
-    session.permanent = True
-    return redirect('/')
+@app.route("/callback")  #this is the page that will handle the callback process meaning process after the authorization
+def callback():
+    flow.fetch_token(authorization_response=request.url)
+
+    if not session["state"] == request.args["state"]:
+        abort(500)  #state does not match!
+
+    credentials = flow.credentials
+    request_session = requests.session()
+    cached_session = cachecontrol.CacheControl(request_session)
+    token_request = google.auth.transport.requests.Request(session=cached_session)
+
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials._id_token,
+        request=token_request,
+        audience=GOOGLE_CLIENT_ID
+    )
+
+    session["google_id"] = id_info.get("sub")  #defing the results to show on the page
+    session["name"] = id_info.get("name")
+    return redirect("/home_page")  #the final page where the authorized users will end up
 
 
-@app.route('/logout')
+@app.route("/logout")  #the logout page and function
 def logout():
-    for key in list(session.keys()):
-        session.pop(key)
-    return redirect('/')
+    session.clear()
+    return redirect("/")
 
+
+#@app.route("/")  #the home page where the login button will be located
+#def index():
+#    return "Hello World <a href='/login'><button>Login</button></a>"
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('home_page.html', env_type=os.getenv("ENV_TYPE"))
+
+
+@app.route("/protected_area")  #the page where only the authorized users can go to
+@authentication
+def protected_area():
+    return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"  #the logout button
+
+
+@app.route('/<module_name>', methods=['GET'])
+def render_page(module_name):
+    """This is an API component responsible to return a HTML page requested.
+       This system is composed of many modules that needs HTML pages with its
+       JavaScript and CSS to render the page to the user in the user’s web browser.
+       It expects the module name as parameter input and will return the proper page.
+    """
+    return render_template(module_name + '.html', env_type=os.getenv("ENV_TYPE"))
 
 # ---------------------------------------------------- #
 #                  Flask App Start                     #

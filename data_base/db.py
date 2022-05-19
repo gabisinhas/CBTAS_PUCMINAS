@@ -1,30 +1,31 @@
 import logging
 import os
-import time
-import traceback
-import data_base.partitions as partitions
-from ibm_cloud_sdk_core import ApiException
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibmcloudant import CloudantV1
-from ibmcloudant.cloudant_v1 import BulkDocs
+import datetime
+import uuid
+from flask import session
+from cloudant.client import Cloudant
+from cloudant.adapters import Replay429Adapter
+from cloudant.document import Document
+
+# ---------------------------------------------------- #
+#                    Logging Setup                     #
+# ---------------------------------------------------- #
+logging.basicConfig(level=logging.INFO)
 from components.util.tools import synchronized
+from data_base import partitions
 
-db_name = os.getenv('DB_NAME')
-db_user = os.getenv('DB_ACCOUNT_NAME')
-db_pass = os.getenv('DB_KEY')
-db_url = os.getenv('DB_URL')
+def setDatabase():
+    global my_database
+    db_name = os.getenv('DB_NAME')
+    db_account_name = os.getenv('DB_ACCOUNT_NAME')
+    db_iam_key = os.getenv('DB_KEY')
+    db_url = os.getenv('DB_URL')
 
+    db = Cloudant.iam(db_account_name, db_iam_key, url=db_url, connect=True,
+                    adapter=Replay429Adapter(retries=30, initialBackoff=0.03))
+    my_database = db[db_name]
 
-def setDatabase:
-    authenticator = IAMAuthenticator(apikey=db_pass)
-
-    service = CloudantV1(authenticator=authenticator)
-
-    service.set_service_url(db_url)
-
-    return service
-
-
+## Test Banco Conexao
 def db_update(doc):
     doc_id = doc['_id':'SR00001']
     setDatabase()
@@ -33,6 +34,30 @@ def db_update(doc):
     doc_to_update.save()
     print(doc_id)
 setDatabase()
+
+
+## Test Banco Salvar Arquivo
+def db_create(doc, partition=None):
+
+    if partition and doc:
+
+        # 1. Prepare database connection
+        setDatabase()
+
+        # 2. Define Document ID based on partition and aleatory ID
+        doc['000001'] = "Assessment:SR00001".format(partition=partition,
+                                               id=str(uuid.uuid4()))
+
+        # 3. Create the document
+        if my_database.create_document(doc):
+
+            return {'status': True,
+                    '_id': doc['_id']}
+
+    return {'status': None,
+            '_id': None}
+
+db_create()
 
 
 @synchronized
@@ -413,22 +438,6 @@ def db_get_settings():
     except Exception as e:
         logging.warning(msg="Getting role exceptions: " + str(e))
         raise
-
-
-def db_select_count_by_period(start_date, end_date, index_name, count_field):
-    setDatabase()
-    design_doc = '_design/dashboard'
-
-    if start_date == '' and end_date == '':
-        date_filter = '*:*'
-    else:
-        date_filter = 'review_date:["{start_date}" TO "{end_date}"]'.format(start_date=start_date,
-                                                                            end_date=end_date)
-
-    docs = my_database.get_search_result(ddoc_id=design_doc, index_name=index_name, query=date_filter,
-                                         counts=[count_field])
-
-    return docs['counts']
 
 
 def add_attachment(doc_id=None, file_list=[]):
