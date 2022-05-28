@@ -10,6 +10,8 @@ import logging
 from flask import Flask, redirect, session, request, render_template, url_for
 from datetime import timedelta
 import os
+import components.control.assessment_management as assessment
+import components.control.access_management as access
 
 app = Flask(__name__)
 app.secret_key = 'Session_Secret'
@@ -21,6 +23,8 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment
 
 env_type = os.getenv("ENV_TYPE")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
+app.register_blueprint(assessment.assessment_management)
+app.register_blueprint(access.access_management)
 
 GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID"  #enter your client id you got from Google console
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")  #set the path to where the .json file you got Google console is
@@ -98,7 +102,7 @@ def logout():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('home_page.html', env_type=os.getenv("ENV_TYPE"))
+    return render_template('login_page.html', env_type=os.getenv("ENV_TYPE"))
 
 
 @app.route("/protected_area")  #the page where only the authorized users can go to

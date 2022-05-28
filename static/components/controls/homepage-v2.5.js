@@ -20,13 +20,6 @@ var index = new Vue ({
 
     },
     methods:{
-        get_permission(){
-           axios
-           .get('/user-management/user/cpf')
-                .then(response => {
-                    if(response.data.roles == "admin") this.admin = true;
-                })
-        }
    },
     template: `
         <div>

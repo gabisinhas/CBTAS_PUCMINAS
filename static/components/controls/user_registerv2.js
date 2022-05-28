@@ -11,34 +11,85 @@ import * as RadioButtons from '/static/components/carbon-collections/radio_butto
 var user_register = new Vue ({
     el: '#user_register',
     data:{
-            user_data:{
+         toast: {
+            show: false,
+            type: '',
+            title: '',
+            subtitle: ''
+        },
+        user_data:{
             nome:'',
             email:'',
             cpf:'',
             celular:'',
-            senha:'',
-            confirmar_senha:''
+            sen:'',
+            confirmar_sen:''
         },
         warning:{
             nome: false,
+            email:false,
+            sen: false,
+            confirmar_sen: false
         },
         required_field: 'Campo Obrigatório',
         checkbox_query_pi: 'Ao fornecer sua informação pessoal e ao clicar no botão ENVIAR, você está consentindo em compartilhar dados pessoais com o HR Global Mobility.',
         message_options:{
         'required_field': 'Por favor preencher os campos mandatórios',
         },
+        overlay: {
+            message: '',
+            message_options: {
+                'user_added_success': 'Usuário cadastrado com sucesso.'
+            },
+            type: '',
+            close_btn_action: 'success'
+        },
+        show_page_loader: false,
+        loading: {
+
+            initial: false
+        },
     },
     components: {
         'text_input_standard' : Inputs.text_input_standard,
         'radio_button_standard' : RadioButtons.radio_button_standard,
         'input_field': Inputs.input_text,
+        'input_date': Inputs.input_date,
+        'text_area_standard': Inputs.text_area_standard,
+        'button_standard': Buttons.button_standard,
+        'loader': Loaders.loader,
+        'checkbox_standard':Checkboxes.checkbox_standard,
+        'checkbox_single': Checkboxes.checkbox_single,
+        'header_standard': Headers.header_standard,
         'notification_info': Notifications.notification_info,
         'notification_toast': Notifications.notification_toast,
-        'button_standard': Buttons.button_standard,
-        'header_standard': Headers.header_standard,
+        'overlay_loader': Loaders.overlay_loader,
+        'input_files': Inputs.input_files,
+        'select_standard': Selects.select_standard,
+        'select_common': Selects.select_common
     },
     methods:{
+
+        check_same_pw(){
+            if(this.user_data.sen!=this.user_data.confirmar_sen){
+                this.toast.type = 'warning';
+                this.toast.title = 'Você precisa digitar mesma senha para confirmação';
+                this.toast.subtitle = '';
+                this.toast.show = true;
+                return true;
+            }
+            return false;
+        },
+
+        closeToast(){
+            this.toast.show = false;
+            this.toast.type = 'info';
+            this.toast.title = '';
+            this.toast.subtitle = '';
+        },
+
         submit_data: function(){
+
             // Clear Alert Message
             this.overlay.message = '';
             this.overlay.type = '';
@@ -58,48 +109,66 @@ var user_register = new Vue ({
                 }
             }
 
-            // Set loader
-            this.loading.initial = true;
-
-            this.show_page_loader = true;
-
-            // 2. Call backend API to add the data
-            if(ready_to_go){
-                axios.
-                        post('/assessment-management/user_data/', this.user_data).
-                        then(response => {
-                                var doc_id = response.data._id.replace(":","_._");
-                                var user_id = response.data.user_id;
-                                let config = {
-                                  header : {
-                                   'Content-Type' : 'multipart/form-data'
-                                 }
-                                }
-                                axios.post('/assessment-management/user_data/' + doc_id ,  config).then(
-                                  response2 => {
-                                    this.loading.initial = false;
-                                    window.location = '/home_page?submitted=' + user_id;
-                                    // redirect to home page with a message that the request (ID) was submitted with success
-                                }).catch(function (error) {
-                                    this.loading.initial = false;
-                                    var user_id = response.data.user_id;
-                                    window.location = '/home_page?submitted=' + user_id ;
-                                });
-                        }else{
-                            this.loading.initial = false;
-                            var user_id = response.data.user_id;
-                            window.location = '/home_page?submitted=' + user_id;
-
-                        }
-                })
-            else if(!ready_to_go){
-                    this.toast.type = 'warning';
-                    this.toast.title = 'Por favor preencher os campos obrigatórios';
-                    this.toast.subtitle = '';
-                    this.toast.show = true;
+            // Missing
+            if(this.user_data.nome == false){
+                ready_to_go = false;
+                this.warning["nome"] = true;
             }
-        }
-    },
+
+            if(this.email == false){
+                ready_to_go = false;
+                this.warning["email"] = true;
+            }
+
+
+            // Call backend API to add the data
+            if(ready_to_go){
+
+                // Set loader
+                this.show_page_loader = true;
+                axios.
+                    post('/user-management/users/', this.user_data).
+                    then(response => {
+                        console.log(response.data);
+                        this.overlay.message = this.overlay.message_options.user_added_success;
+                        this.overlay.type = "Seu usuario foi cadastrado com sucesso"
+                        this.loading.initial = false;
+                        window.location = '/home_page';
+                    })
+            }
+            else if(!ready_to_go){
+                this.toast.type = 'warning';
+                this.toast.title = 'Por favor preencher os campos obrigatórios';
+                this.toast.subtitle = '';
+                this.toast.show = true;
+            }
+        },
+        closeButtonOverlayHandler: function (e) {
+            if (this.overlay.close_btn_action == 'success') {
+                window.location = "/home_page";
+            }
+        },
+
+        showOverlay: function () {
+
+            document.getElementById("custom-overlay").style.display = "block";
+        },
+
+        hideOverlay: function () {
+
+            document.getElementById("custom-overlay").style.display = "none";
+        },
+
+        load_contexts: function(){
+            axios.
+                get('/context_management/context/')
+                    .then(response => {
+                        for(var x in response.data){
+                            this.contexts.push({'value': response.data[x]._id, 'text': response.data[x].name});
+                        }
+                    });
+        },
+   },
 
     template: `
         <div>
@@ -141,6 +210,8 @@ var user_register = new Vue ({
                             v-bind:label="'Nome Completo'"
                             v-bind:mandatory="true"
                             :invalid_msg="required_field"
+                            v-bind:warning="warning.nome"
+                            v-bind:invalid="warning.nome"
                             >
                         </text_input_standard>
                    </div>
@@ -148,6 +219,8 @@ var user_register = new Vue ({
                             <text_input_standard
                             v-model="user_data.email"
                             v-bind:label="'Email'"
+                            v-bind:warning="warning.email"
+                            v-bind:invalid="warning.email"
                             v-bind:mandatory="true"
                             :invalid_msg="required_field"
                             >
@@ -159,8 +232,6 @@ var user_register = new Vue ({
                             <text_input_standard
                             v-model="user_data.cpf"
                             v-bind:label="'CPF'"
-                            v-bind:mandatory="true"
-                            :invalid_msg="required_field"
                             >
                         </text_input_standard>
                    </div>
@@ -168,35 +239,38 @@ var user_register = new Vue ({
                             <text_input_standard
                             v-model="user_data.celular"
                             v-bind:label="'Celular'"
-                            v-bind:mandatory="true"
-                            :invalid_msg="required_field"
                             >
                         </text_input_standard>
                    </div>
                 </div>
                 <div class="bx--row" style="padding-top:16px">
-                   <div class="bx--col" style="padding-right:100px;margin-right:250px">
+                   <div class="bx--col" style="">
                             <text_input_standard
-                            v-model="user_data.senha"
-                            v-bind:label="'Senha'"
+                            v-model="user_data.sen"
+                            v-bind:select_id="'sen_select_id'"
+                            v-bind:label="'Sen'"
+                            v-bind:warning="warning.sen"
+                            v-bind:invalid="warning.sen"
                             v-bind:mandatory="true"
                             :invalid_msg="required_field"
                             >
                         </text_input_standard>
                    </div>
-                </div>
-                <div class="bx--row" style="padding-top:16px; padding-bottom:16px">
-                   <div class="bx--col" style="padding-right:100px;margin-right:250px">
+                   <div class="bx--col" style="">
                             <text_input_standard
-                            v-model="user_data.confirmar_senha"
+                            v-model="user_data.confirmar_sen"
+                            v-bind:select_id="'confirmar_sen_select_id'"
                             v-bind:label="'Confirmar Senha'"
+                            :warning_message="warning.confirmar_sen ? required_field : ''"
                             v-bind:mandatory="true"
+                            v-on:change.native="check_same_pw()"
+                            v-bind:warning="warning.confirmar_sen"
+                            v-bind:invalid="warning.confirmar_sen"
                             :invalid_msg="required_field"
                             >
                         </text_input_standard>
                    </div>
                 </div>
-            </div>
                 <div class="bx--row" style="padding-top:16px; padding-bottom:32px;">
                      <div class= "bx--col--2" style=""></div>
                      <div class= "bx--col--2" style="">
@@ -211,14 +285,27 @@ var user_register = new Vue ({
                             theme="tertiary"
                             label="Cancelar"
                             style="float: right; margin-right: 10px;margin-left: 65px"
-                            @click.native="this.window.location='/my_assessments'"
+                            @click.native="this.window.location='/home_page'"
                             >
                         </button_standard>
                      </div>
                 </div>
+            </div>
             <footer class="footer">
                 <p>Precisa de ajuda ? Entre em contato conosco.</p>
             </footer>
+            <notification_toast
+                    :show="toast.show"
+                    :type="toast.type"
+                    :title="toast.title"
+                    :subtitle="toast.subtitle"
+                    v-on:close-toast="toast.show = false"
+                    >
+            </notification_toast>
+            <overlay_loader
+                    :is_visible="loading.initial"
+            >
+            </overlay_loader>
         </div>
-      `
-    })
+    `
+})

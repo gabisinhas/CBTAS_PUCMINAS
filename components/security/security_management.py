@@ -4,7 +4,7 @@ from flask import render_template, request, jsonify, session, url_for, Blueprint
 from werkzeug.utils import redirect
 
 from components.model.access import get_user_roles
-from data_base.database_operations import db_get_user_roles, db_get_settings
+from data_base.db import db_get_user_roles, db_get_settings
 import logging
 import os
 

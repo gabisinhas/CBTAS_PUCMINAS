@@ -5,7 +5,8 @@ from components.model.access import get_application_level_users, \
                                     add_application_level_user, \
                                     remove_application_level_user, \
                                     add_application_level_user_role, \
-                                    remove_application_level_user_role
+                                    remove_application_level_user_role, \
+                                    user_validation
 
 # 1. Define the blueprint
 
@@ -75,21 +76,4 @@ def user_roles(email=None, role=None):
         logging.error("** user_roles: exception ** ")
         logging.exception(str(e))
         return jsonify({'status': 'Internal error'}), 500
-
-
-@access_management.route('/user-management/user/cpf', methods=['GET'])
-def user_management():
-    try:
-        logging.info(">> user_management: Starting <<")
-
-        if "cpf" in session:
-            return jsonify({'cpf': session["cpf"]}), 200
-
-        return jsonify({'status': 'No authorized'}), 401
-
-    except Exception as e:
-        logging.error("** user_management: exception ** ")
-        logging.exception(str(e))
-        return jsonify({'status': 'Internal error'}), 500
-
 

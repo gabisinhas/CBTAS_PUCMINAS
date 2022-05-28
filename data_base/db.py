@@ -6,6 +6,7 @@ from flask import session
 from cloudant.client import Cloudant
 from cloudant.adapters import Replay429Adapter
 from cloudant.document import Document
+from components.util.tools import synchronized
 
 # ---------------------------------------------------- #
 #                    Logging Setup                     #
@@ -17,48 +18,13 @@ from data_base import partitions
 def setDatabase():
     global my_database
     db_name = os.getenv('DB_NAME')
-    db_account_name = os.getenv('DB_ACCOUNT_NAME')
-    db_iam_key = os.getenv('DB_KEY')
+    db_user = os.getenv('DB_USER')
+    db_pass = os.getenv('DB_PWD')
     db_url = os.getenv('DB_URL')
 
-    db = Cloudant.iam(db_account_name, db_iam_key, url=db_url, connect=True,
-                    adapter=Replay429Adapter(retries=30, initialBackoff=0.03))
+    db = Cloudant.iam(db_user, db_pass, url=db_url, connect=True,
+                      adapter=Replay429Adapter(retries=30, initialBackoff=0.03))
     my_database = db[db_name]
-
-## Test Banco Conexao
-def db_update(doc):
-    doc_id = doc['_id':'SR00001']
-    setDatabase()
-    doc_to_update = my_database[doc_id]
-    doc_to_update.update(doc)
-    doc_to_update.save()
-    print(doc_id)
-setDatabase()
-
-
-## Test Banco Salvar Arquivo
-def db_create(doc, partition=None):
-
-    if partition and doc:
-
-        # 1. Prepare database connection
-        setDatabase()
-
-        # 2. Define Document ID based on partition and aleatory ID
-        doc['000001'] = "Assessment:SR00001".format(partition=partition,
-                                               id=str(uuid.uuid4()))
-
-        # 3. Create the document
-        if my_database.create_document(doc):
-
-            return {'status': True,
-                    '_id': doc['_id']}
-
-    return {'status': None,
-            '_id': None}
-
-db_create()
-
 
 @synchronized
 def next_id():
@@ -84,9 +50,11 @@ def next_id():
         doc.fetch()
         doc.field_set(doc, 'latest_id', latest_id)
         doc.save()
+        print('doc')
 
         # 7. Return
         return parse_id
+        print('parse_id')
 
     except Exception as e:
         logging.warning(msg="ID generation exception: " + str(e))
@@ -125,8 +93,8 @@ def db_create(doc, partition=None):
                                                id=str(uuid.uuid4()))
 
         # 3. Create the document
-        if my_database.create_document(doc):
-
+        new_doc = my_database.create_document(doc)
+        if new_doc:
             return {'status': True,
                     '_id': doc['_id']}
 
@@ -156,10 +124,13 @@ def db_delete_by_id(doc_id):
 def db_update(doc):
     doc_id = doc['_id']
     setDatabase()
-    doc_to_update = my_database[doc_id]
-    doc_to_update.update(doc)
-    doc_to_update.save()
-
+    if doc_id in my_database:
+        doc_to_update = my_database[doc_id]
+        doc_to_update.update(doc)
+        doc_to_update.save()
+        return doc_to_update
+    else:
+        return False
 
 def db_select_all():
     setDatabase()
@@ -438,39 +409,3 @@ def db_get_settings():
     except Exception as e:
         logging.warning(msg="Getting role exceptions: " + str(e))
         raise
-
-
-def add_attachment(doc_id=None, file_list=[]):
-    setDatabase()
-
-    if doc_id in my_database:
-        doc = my_database[doc_id]
-        for file in file_list:
-            doc.put_attachment(attachment=file['file_name'],
-                               content_type=file['content_type'],
-                               data=file['data'])
-        doc.save()
-        return doc
-    return None
-
-
-def delete_attachment(doc_id=None, file_list=[]):
-    setDatabase()
-
-    if doc_id in my_database:
-        doc = my_database[doc_id]
-        for file in file_list:
-            doc.delete_attachment(attachment=file)
-        doc.save()
-        return doc
-    return None
-
-
-def get_attachment(doc_id=None, file_name=None):
-    setDatabase()
-
-    if doc_id in my_database:
-        doc = my_database[doc_id]
-        file = doc.get_attachment(attachment=file_name)
-        return file
-    return None
