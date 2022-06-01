@@ -80,7 +80,6 @@ export var checkbox_single = {
             <legend class="bx--label">{{ checkbox_label }}</legend>
             <div class="bx--form-item bx--checkbox-wrapper">
                     <input :id="checkbox_id" :class="{'bx--checkbox-mandatory': warning, 'bx--checkbox': !warning}" type="checkbox" name="checkbox"
-                           :checked="value"
                            @change="$emit('input', $event.target.checked)"
                            :disabled="disabled" style="margin-right: 48px; background-color: #fdf0bf;"
                            >

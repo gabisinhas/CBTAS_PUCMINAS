@@ -12,25 +12,6 @@ export var header_standard = {
         }
     },
     beforeCreate() {
-       axios
-       .get('/user-management/user/cpf')
-            .then(response => {
-                this.serial_number = response.data.serial_number;
-                if(response.data.roles == "admin") this.role_admin = true;
-                if(this.serial_number == ""){
-                    this.image_none = true;
-                }else{
-                    axios
-                    .get('https://unified-profile-api.us-south-k8s.intranet.ibm.com/v3/image/' + this.serial_number)
-                        .then(response => {
-                            if(response.headers['content-type'] == undefined){
-                                this.image_none = true;
-                            }
-                        })
-                }
-            }).catch(error =>{
-                this.image_none = true;
-            })
     },
     methods: {
         setRoles(roles){
@@ -115,6 +96,13 @@ export var header_standard = {
                             <a href="/login_page" class="bx--header__menu-item" tabindex="-1">
                               <span class="bx--text-truncate--end">
                                 Login
+                              </span>
+                            </a>
+                          </li>
+                          <li role="none" v-show="serial_number == ''">
+                            <a href="/logout" class="bx--header__menu-item" tabindex="-1">
+                              <span class="bx--text-truncate--end">
+                                Logout
                               </span>
                             </a>
                           </li>

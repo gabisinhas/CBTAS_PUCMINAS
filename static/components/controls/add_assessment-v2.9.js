@@ -17,9 +17,6 @@ var add_assessment = new Vue ({
             title: '',
             subtitle: ''
         },
-        //business_data:{
-        //'nome': 'Gabriela'
-        //}
         business_data:{
             cpf:'',
             nome:'',
@@ -30,23 +27,20 @@ var add_assessment = new Vue ({
             unidadeneg:'',
             project_dept: '',
             email_copy: '',
-            cbta_question:"No",
             origin_country:'',
             destin_country:'',
             query_type:[],
             query_desc:'',
             planned_start:'',
             planned_end:'',
-            status: "Opened",
+            query_pi: '',
         },
-        attachments: {},
         warning:{
             cpf: false,
             nome: false,
             last_name: false,
             email: false,
             nacionalidade: false,
-            cbta_question: false,
             origin_country: false,
             destin_country: false,
             query_desc: false,
@@ -80,7 +74,6 @@ var add_assessment = new Vue ({
             initial: false
         },
         message_options:{
-
         'required_field': 'Por favor preencher os campos mandatórios',
         },
         custom_message: '',
@@ -861,6 +854,13 @@ var add_assessment = new Vue ({
         'select_standard': Selects.select_standard,
         'select_common': Selects.select_common
     },
+
+    created() {
+        console.log(" Check point");
+        // 1. Start Loader
+        //this.loading.initial = true;
+    },
+
     computed: {
         start_date() {
             return this.business_data.planned_start;
@@ -869,6 +869,7 @@ var add_assessment = new Vue ({
             return this.business_data.planned_end;
         }
     },
+
     watch:{
 
         start_date: function(newValue, oldValue){
@@ -882,6 +883,7 @@ var add_assessment = new Vue ({
         }
 
     },
+
     methods:{
 
         check_same_country(){
@@ -941,11 +943,10 @@ var add_assessment = new Vue ({
                 return true;
             }
             return false;
+
         },
 
         submit_data: function(){
-
-            let attachment_issue = false;
 
             // Clear Alert Message
             this.overlay.message = '';
@@ -984,66 +985,20 @@ var add_assessment = new Vue ({
                 ready_to_go_dates = false;
             }
 
-            // Check the attachment
-            var ready_to_go_attachment = true;
-            if(this.business_data.cbta_question=="Yes" && Object.keys(this.attachments).length == 0){
-                ready_to_go_attachment = false;
-            }
-            if(this.business_data.cbta_question=="No" && Object.keys(this.attachments).length > 0){
-                this.attachments = {};
-            }
-
             // 2. Call backend API to add the data
-            if(ready_to_go && ready_to_go_dates && ready_to_go_attachment){
+            if(ready_to_go && ready_to_go_dates){
 
                 // Set loader
-                this.loading.initial = true;
-
                 this.show_page_loader = true;
                 axios.
                     post('/assessment-management/assessment/', this.business_data).
                     then(response => {
-                        if(Object.keys(this.attachments).length > 0){
-
-                            // Add the attachments
-                            var doc_id = response.data._id.replace(":","_._");
-                            var assessment_id = response.data.assessment_id;
-                            let config = {
-                              header : {
-                               'Content-Type' : 'multipart/form-data'
-                             }
-                            }
-
-                            var file_forms = new FormData();
-                            for(var key in this.attachments){
-                                file_forms.append(key, this.attachments[key]);
-                            }
-                            var raw_entry = response.data.doc;
-
-                            axios.post('/assessment-management/assessment/' + doc_id + '/attachment', file_forms, config).then(
-                              response2 => {
-                                this.loading.initial = false;
-                                window.location = '/my_assessments?submitted=' + assessment_id;
-                                // redirect to home page with a message that the request (ID) was submitted with success
-                            }).catch(function (error) {
-                                this.loading.initial = false;
-                                var assessment_id = response.data.assessment_id;
-                                window.location = '/my_assessments?submitted=' + assessment_id + '&attachment=issue';
-                            });
-                        }else{
-                            this.loading.initial = false;
-                            var assessment_id = response.data.assessment_id;
-                            window.location = '/my_assessments?submitted=' + assessment_id;
-                        }
+                        console.log(response.data);
+                        this.overlay.message = this.overlay.message_options.assessment_added_success;
+                        this.overlay.type = "Seu formulario foi recebido com sucesso"
+                        this.loading.initial = false;
+                        window.location = '/home_page';
                     })
-
-
-            }
-            else if(!ready_to_go_attachment){
-                this.toast.type = 'warning';
-                this.toast.title = 'Por favor anexe o arquivo';
-                this.toast.subtitle = '';
-                this.toast.show = true;
             }
             else if(!ready_to_go){
                 this.toast.type = 'warning';
@@ -1078,23 +1033,6 @@ var add_assessment = new Vue ({
                         }
                     });
         },
-
-        delete_attachment(file_name){
-
-            Vue.delete(this.attachments, file_name);
-        },
-
-        add_attachment(event){
-            let file = event.target.files[0];
-            Vue.set(this.attachments, file.name, file);
-        },
-
-        file_size_exception(){
-            this.toast.type = 'warning';
-            this.toast.title = 'O arquivo não pode exceder o tamanho de 10MB';
-            this.toast.subtitle = '';
-            this.toast.show = true;
-        }
    },
     template: `
         <div>
@@ -1229,35 +1167,6 @@ var add_assessment = new Vue ({
                         <h2 class="h1" style="float:left; vertical-align: bottom;">&nbsp;Detalhes da Viagem</h2>
                     </div>
                 </div>
-                 <div class="bx--row" style="padding-top:16px;">
-                    <div class="bx--col" style="width: 50%;">
-                        <radio_button_standard
-                            v-model="business_data.cbta_question"
-                            v-bind:label="'Você completou o checklist de viagem?'"
-                            v-bind:options="yes_no_options"
-                            v-bind:mandatory="true"
-                            v-bind:group_id="'cbta_question_option'"
-                            v-bind:aria_labelledby="'cbta_question_aria'"
-                            v-bind:invalid="warning.cbta_question"
-                            :invalid_msg="required_field"
-                            >
-                        </radio_button_standard>
-                    </div>
-                     <div class="bx--col" style="width: 50%;">
-                        <div>
-                            <input_files v-show="business_data.cbta_question=='Yes'"
-                                v-bind:label="'Anexe o arquivo de evidência'"
-                                v-bind:data_table="attachments"
-                                v-bind:mandatory="true"
-                                v-on:add_action="add_attachment($event)"
-                                v-on:delete_action="delete_attachment($event)"
-                                v-on:file_size_exception="file_size_exception()"
-
-                            >
-                            </input_files>
-                        </div>
-                    </div>
-                </div>
                 <div class="bx--row" style="padding-top:16px;">
                     <div class="bx--col" >
                         <select_common
@@ -1330,12 +1239,25 @@ var add_assessment = new Vue ({
                         </input_date>
                     </div>
                 </div>
+                <div class="bx--row" style="padding-top:16px;">
+                    <div class="bx--col" >
+                        <checkbox_single
+                            :checkbox_id = "'query_pi_id'"
+                            v-model="business_data.query_pi"
+                            v-bind:option_label="checkbox_query_pi"
+                            v-bind:group_id="'query_type_option'"
+                            v-bind:aria_labelledby="'query_type_aria'"
+                            v-bind:warning="warning.query_pi"
+                            >
+                        </checkbox_single>
+                    </div>
+                </div>
                 <div class="bx--row" style="padding-top:16px; padding-bottom:32px;">
                      <div class= "bx--col">
                         <button_standard
                             theme="Primary"
                             label="Enviar"
-                            v-on:click.native="login()"
+                            v-on:click.native="submit_data()"
                             style="float: right;">
                             >
                         </button_standard>

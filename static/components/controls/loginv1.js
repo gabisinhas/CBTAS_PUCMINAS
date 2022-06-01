@@ -119,8 +119,8 @@ var user_register = new Vue ({
                    </div>
                 </div>
                 <div class="bx--row" style="padding-top:16px;">
-                    <div class="bx--col"style="padding-left:15px;"></div>
-                    <div class="bx--col--2" style="padding-left:x;padding-right:150px;margin-right:px">
+                    <div class="bx--col--2" style="padding-left:15px;padding-right:150px;margin-right:px">
+                         <a href="/login">
                          <button_standard
                             style="background-color: #00bfff; font-weight: bold; text-align: center;"
                             v-model="login_data.login"
@@ -130,6 +130,11 @@ var user_register = new Vue ({
                             >
                          </button_standard>
                     </div>
+                    <div class="bx--col"></div>
+                    <div class="bx--col"></div>
+                    <div class="bx--col"></div>
+                </div>
+                <div class="bx--row" style="padding-top:16px;">
                     <div class="bx--col--2" style="padding-left:15px;padding-right:150px;margin-right:px">
                          <a href="/login">
                          <button_standard

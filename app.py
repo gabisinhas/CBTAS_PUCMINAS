@@ -10,19 +10,22 @@ import logging
 from flask import Flask, redirect, session, request, render_template, url_for
 from datetime import timedelta
 import os
+import components.control.assessment_management as assessment
+import components.control.access_management as access
 
 app = Flask(__name__)
 app.secret_key = 'Session_Secret'
 app.permanent_session_lifetime = timedelta(hours=10)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JSON_SORT_KEYS'] = False
-env_type = os.getenv("ENV_TYPE")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
 
 env_type = os.getenv("ENV_TYPE")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
+app.register_blueprint(assessment.assessment_management)
+app.register_blueprint(access.access_management)
 
-GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID"  #enter your client id you got from Google console
+GOOGLE_CLIENT_ID = "791794379854-5u8a2u80tcht2p1vm42rfbeiuf29s1rb.apps.googleusercontent.com"  #enter your client id you got from Google console
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")  #set the path to where the .json file you got Google console is
 
 flow = Flow.from_client_secrets_file(  #Flow is OAuth 2.0 a class that stores all the information on how we want to authorize our users
@@ -82,7 +85,7 @@ def callback():
 
     session["google_id"] = id_info.get("sub")  #defing the results to show on the page
     session["name"] = id_info.get("name")
-    return redirect("/home_page")  #the final page where the authorized users will end up
+    return redirect("/protected_area")  #the final page where the authorized users will end up
 
 
 @app.route("/logout")  #the logout page and function
@@ -98,13 +101,12 @@ def logout():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('home_page.html', env_type=os.getenv("ENV_TYPE"))
+    return render_template('login_page.html', env_type=os.getenv("ENV_TYPE"))
 
 
 @app.route("/protected_area")  #the page where only the authorized users can go to
-@authentication
 def protected_area():
-    return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"  #the logout button
+    return render_template('home_page.html', env_type=os.getenv("ENV_TYPE"))
 
 
 @app.route('/<module_name>', methods=['GET'])

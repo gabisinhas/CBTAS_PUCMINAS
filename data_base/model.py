@@ -18,11 +18,11 @@ ASSESSMENT_ENTITY = {
     "unidadeneg": '',
     "project_dept": '',
     "email_copy": '',
-    "cbta_question": '',
     "origin_country": '',
     "destin_country": '',
     "query_type": '',
     "query_desc": '',
     "planned_start": '',
     "planned_end": '',
+    "query_pi": ''
 }

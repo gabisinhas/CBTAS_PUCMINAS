@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 
-import data_base.database_operations as database
+import data_base.db as database
 import data_base.partitions as partitions
 import components.security.user_session as user_session
 from components.model import communication
@@ -29,49 +29,16 @@ def add_assessment(assessment=None):
 #       assessment['created_by'] = user_session.get_user_session()['email']
 
         # 4. Add the object in the database
-        result = database.db_create(doc=assessment, partition=None)
-#       result = database.db_create(doc=assessment, partition="assessment")
+#        result = database.db_create(doc=assessment, partition=None)
+        result = database.db_create(doc=assessment, partition="assessment")
 
         # 5. Return result
         if result['status'] is True:
-
-            # Email to the requester
-            body_data = {'ticket_number': assessment['assessment_id'],
-                         'employee_name': assessment['first_name'],
-                         'employee_name_last': assessment['last_name'],
-                         'employee_cnum': assessment['serial_number'],
-                         'employee_email': assessment['email'],
-                         'nationality': assessment['nationality'],
-                         'cbta_status': assessment['cbta_question'],
-                         'home_country': assessment['origin_country'],
-                         'destination_country': assessment['destin_country'],
-                         'start_date': assessment['planned_start'],
-                         'end_date': assessment['planned_end'],
-                         'query_type': ', '.join(assessment['query_type']),
-                         'query_description': assessment['query_desc'],
-                         'residency_status': assessment['residency_status'],
-                         'residency_details': assessment['details_visa'],
-                         'assessment_id': assessment['assessment_id'],
-                         'assessment_link': os.getenv("SERVER_URL") + "/view_assessment?id=" + result["_id"].split(":")[1],
-                         'tool_image_link': os.getenv("SERVER_URL") + '/static/images/',
-                         'assessment_download': "<a href=" + os.getenv("SERVER_URL") + '/assessment_attachment?assessment_id=' + result["_id"].split(":")[1] + "><b>Download the assessment result</b></a>" if assessment['cbta_question'] == "Yes" else "No CBTA assessment result provided"}
-            ''
-
-            body, subject = template_notification_requester(body_data=body_data)
-
-            communication.send_blue_mail(sender=os.getenv("TOOL_MAIL"),
-                                         recipients=[assessment["email"]],
-                                         recipient_cc=[assessment["email_copy"]] if ("@" in assessment["email_copy"] and "ibm.com" in assessment["email_copy"]) else None,
-                                         subject=subject,
-                                         body=body)
-
-
-
-        return [500, None]
+            return [200, None]
 
     except Exception as e:
         logging.info(msg="add_assessment exception: " + str(e))
-        return [500, None]
+    return [500, None]
 
 
 def get_user_owned_assessment(ibm_user_serial=None):
