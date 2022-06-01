@@ -248,7 +248,7 @@ var user_register = new Vue ({
                             <text_input_standard
                             v-model="user_data.sen"
                             v-bind:select_id="'sen_select_id'"
-                            v-bind:label="'Sen'"
+                            v-bind:label="'Senha'"
                             v-bind:warning="warning.sen"
                             v-bind:invalid="warning.sen"
                             v-bind:mandatory="true"

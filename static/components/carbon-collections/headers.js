@@ -99,6 +99,13 @@ export var header_standard = {
                               </span>
                             </a>
                           </li>
+                          <li role="none" v-show="serial_number == ''">
+                            <a href="/logout" class="bx--header__menu-item" tabindex="-1">
+                              <span class="bx--text-truncate--end">
+                                Logout
+                              </span>
+                            </a>
+                          </li>
                         </ul>
                     </li>
                 </div>

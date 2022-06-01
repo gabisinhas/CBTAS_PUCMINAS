@@ -10,4 +10,5 @@ def get_partitions():
     return {
         "settings": "settings",
         "assessment": "assessment",
+        "users":"users"
     }
