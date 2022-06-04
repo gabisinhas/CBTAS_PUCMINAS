@@ -29,7 +29,6 @@ def add_assessment(assessment=None):
 #       assessment['created_by'] = user_session.get_user_session()['email']
 
         # 4. Add the object in the database
-#        result = database.db_create(doc=assessment, partition=None)
         result = database.db_create(doc=assessment, partition="assessment")
 
         # 5. Return result
@@ -41,15 +40,15 @@ def add_assessment(assessment=None):
     return [500, None]
 
 
-def get_user_owned_assessment(ibm_user_serial=None):
+def get_user_owned_assessment(email=None):
     """This component retrieves all assessment submitted by the current user logged in the system"""
     try:
         logging.info(msg="get_user_owned_assessment - Start")
-        if ibm_user_serial:
+        if email:
             # 1. Select from database the records filtering by the user email
             selector = {
-                "serial_number": {
-                    "$eq": ibm_user_serial
+                "email": {
+                    "$eq": email
                 }
             }
 

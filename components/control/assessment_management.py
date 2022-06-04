@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 import components.model.assessment as assessment_model
 import logging
 import data_base.db as database
@@ -57,3 +57,19 @@ def assessment():
         logging.exception(str(e))
         return jsonify({'status': 'Internal error'}), 500
 
+
+@assessment_management.route('/assessment-management/assessment/user/', methods=['GET'])
+def user_assessments():
+    """Retrieve current user assessment requests"""
+
+    logging.info(">>user_assessments: Starting<<")
+
+    try:
+        code, result = assessment_model.get_user_owned_assessment(email=session["email"])
+
+        return jsonify(result), code
+
+    except Exception as e:
+        logging.error("** user_assessments: exception ** ")
+        logging.exception(str(e))
+        return jsonify({'status': 'Internal error'}), 500
