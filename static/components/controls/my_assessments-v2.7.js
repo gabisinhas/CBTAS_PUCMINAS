@@ -44,67 +44,61 @@ var my_assessments = new Vue ({
         // Data table raw
         data_table_raw:{
             'partition:key': {
-                    serial_number:'A',
-                    first_name:'A',
+                    cpf:'A',
+                    nome:'A',
                     last_name:'A',
                     email:'A',
-                    phone:'A',
-                    nationality:'A',
-                    bus_unit:'A',
+                    cellphone:'A',
+                    nacionalidade:'A',
+                    unidadeneg:'A',
                     project_dept: 'A',
                     email_copy: 'A',
-                    cbta_question:'A',
                     origin_country:'A',
                     destin_country:'A',
                     query_type:'A',
                     query_desc:'A',
                     planned_start:'A',
                     planned_end:'A',
-                    residency_status:'A',
-                    details_visa:'A'
+                    query_pi: 'A'
             },
             'partition:key2': {
-                    serial_number:'B',
-                    first_name:'B',
+                    cpf:'B',
+                    nome:'B',
                     last_name:'B',
                     email:'B',
-                    phone:'B',
-                    nationality:'B',
-                    bus_unit:'B',
+                    cellphone:'B',
+                    nacionalidade:'B',
+                    unidadeneg:'B',
                     project_dept: 'B',
                     email_copy: 'B',
-                    cbta_question:'B',
                     origin_country:'B',
                     destin_country:'B',
                     query_type:'B',
                     query_desc:'B',
                     planned_start:'B',
                     planned_end:'B',
-                    residency_status:'B',
-                    details_visa:'B'
+                    query_pi: 'B'
             }
         },
 
         // Business data control
         business_data:{
-            serial_number:'',
-            first_name:'',
+            cpf:'',
+            nome:'',
             last_name:'',
             email:'',
-            phone:'',
-            nationality:'',
-            bus_unit:'',
+            cellphone:'',
+            nacionalidade:'',
+            unidadeneg:'',
             project_dept: '',
             email_copy: '',
-            cbta_question:'',
             origin_country:'',
             destin_country:'',
-            query_type:'',
+            query_type:[],
             query_desc:'',
             planned_start:'',
             planned_end:'',
-            residency_status:'',
-            details_visa:''
+            query_pi: '',
         },
 
         // Default components data options
@@ -293,7 +287,7 @@ var my_assessments = new Vue ({
                     :is_visible="loading.initial"
             ></overlay_loader>
             <footer class="footer">
-                <a><img src="/static/images/IBM_logo_black.png"></a>
+                <a><img src=""></a>
             </footer>
         </div>
       `

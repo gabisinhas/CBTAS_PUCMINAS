@@ -13,38 +13,30 @@ var view_assessment = new Vue ({
     data:{
         view_mode: false,
         assessment_id: '',
-        newco_user: false,
         toast: {
             show: false,
             type: '',
             title: '',
             subtitle: ''
         },
-        attachments: '',
-        attachments_original : {},
         business_data:{
             _id: '',
-            serial_number:'',
-            first_name:'',
+            cpf:'',
+            nome:'',
             last_name:'',
             email:'',
-            phone:'',
-            nationality:'',
-            bus_unit:'',
+            cellphone:'',
+            nacionalidade:'',
+            unidadeneg:'',
             project_dept: '',
             email_copy: '',
-            cbta_question:"No",
             origin_country:'',
             destin_country:'',
             query_type:[],
             query_desc:'',
             planned_start:'',
             planned_end:'',
-            residency_status:"No",
-            details_visa:'',
-            query_pi: false,
-            status: "Opened",
-            comments: ""
+            query_pi: false
         },
         // Information variables regarding page
         information: {
@@ -53,21 +45,23 @@ var view_assessment = new Vue ({
             title2: 'Attention:',
             subtitle2: 'Please visit the <a href="https://w3.ibm.com/hr/web/mobility/assignments/" target="_blank"><strong class="links">Global Mobility</strong></a> page and the <a href="https://w3.ibm.com/hr/askhr/" target="_blank"><strong class="links">ASKHR bot</strong></a> before you submit a query/support request here. Your question may already be listed and answered there.',
         },
-        attachments: {},
         warning:{
-            serial_number: false,
-            first_name: false,
-            last_name: false,
-            email: false,
-            nationality: false,
-            cbta_question: false,
-            origin_country: false,
-            destin_country: false,
-            query_desc: false,
-            planned_start: false,
-            planned_end: false,
-            query_pi: false,
-            query_type: false
+            cpf:false,
+            nome:false,
+            last_name:false,
+            email:false,
+            cellphone:false,
+            nacionalidade:false,
+            unidadeneg:false,
+            project_dept: false,
+            email_copy: false,
+            origin_country:false,
+            destin_country:false,
+            query_type:false,
+            query_desc:false,
+            planned_start:false,
+            planned_end:false,
+            query_pi: false
         },
         required_field: 'Required field',
         yes_no_options:[
@@ -889,37 +883,22 @@ var view_assessment = new Vue ({
             then(response => {
                 // Populate user data
                 this.business_data._id = response.data['_id'];
-                this.business_data.serial_number = response.data['serial_number'];
-                this.business_data.first_name = response.data['first_name'];
+                this.business_data.cpf = response.data['cpf'];
+                this.business_data.nome = response.data['nome'];
                 this.business_data.last_name = response.data['last_name'];
                 this.business_data.email = response.data['email'];
-                this.business_data.bus_unit = response.data['bus_unit'];
-                this.business_data.phone = response.data['phone'];
-                this.business_data.nationality = response.data['nationality'];
+                this.business_data.cellphone = response.data['cellphone'];
+                this.business_data.nacionalidade = response.data['nacionalidade'];
+                this.business_data.unidadeneg = response.data['unidadeneg'];
                 this.business_data.project_dept = response.data['project_dept'];
                 this.business_data.email_copy = response.data['email_copy'];
-                this.business_data.cbta_question = response.data['cbta_question'];
                 this.business_data.origin_country = response.data['origin_country'];
                 this.business_data.destin_country = response.data['destin_country'];
                 this.business_data.query_type = response.data['query_type'];
                 this.business_data.query_desc = response.data['query_desc'];
                 this.business_data.planned_start = response.data['planned_start'];
                 this.business_data.planned_end = response.data['planned_end'];
-                this.business_data.residency_status = response.data['residency_status'];
-                this.business_data.details_visa = response.data['details_visa'];
-                this.business_data.query_pi = response.data['query_pi'];
-                this.business_data.status = response.data['status'];
-                this.business_data.comments = response.data['comments'];
-                this.newco_user = response.data['newco_user'];
-
-                // 2. Populate the attachments references
-                this.attachments = {};
-                for(var key in response.data._attachments){
-                    this.attachments[key] = {'name': key, 'url': '/assessment-management/assessment/' + response.data._id.replace(":","_._") + '/attachment/' + key};
-                    this.attachments_original[key] = {'name': key, 'url': '/assessment-management/assessment/' + response.data._id.replace(":","_._") + '/attachment/' + key};
-                }
-                this.loading.initial = false;
-
+                this.business_data.query_pi = response.data['query_pi']
             })
     },
     computed: {
@@ -1006,16 +985,14 @@ var view_assessment = new Vue ({
             // Call current user data
             this.loading.initial = true;
             axios.
-                get('/assessment-management/user/'+this.business_data.serial_number).
+                get('/assessment-management/user/'+this.business_data.cpf).
                 then(response =>{
                     // Populate user data
-                    this.business_data.employee_id = response.data[1]['serial_number'];
-                    this.business_data.first_name = response.data[1]['first_name'];
+                    this.business_data.nome = response.data[1]['nome'];
                     this.business_data.last_name = response.data[1]['last_name'];
-                    this.business_data.email = response.data[1]['mail'];
-                    this.business_data.bus_unit = response.data[1]['bus_unit'];
-                    this.business_data.people_manager_email = response.data[1]['manager_email'];
-                    this.business_data.manager_name = response.data[1]['manager_name'];
+                    this.business_data.email = response.data[1]['email'];
+                    this.business_data.origin_country = response.data[1]['origin_country'];
+                    this.business_data.destin_country = response.data[1]['destin_country'];
                     this.loading.initial = false;
                 })
         },
@@ -1046,14 +1023,6 @@ var view_assessment = new Vue ({
                     });
         },
 
-        delete_attachment(file_name){
-            Vue.delete(this.attachments, file_name);
-        },
-
-        add_attachment(event){
-            let file = event.target.files[0];
-            Vue.set(this.attachments, file.name, file);
-        },
 
         submit_data: function(){
 
@@ -1061,8 +1030,6 @@ var view_assessment = new Vue ({
             this.loading.initial = true;
 
             this.show_page_loader = true;
-
-            let attachment_issue = false;
 
             axios.
                 put('/assessment-management/assessment/', this.business_data).
@@ -1075,49 +1042,6 @@ var view_assessment = new Vue ({
                     var control_flag = true;
                     var add_control = false;
                     var delete_control = false;
-
-                    // 2. Define attachments to be added
-                    // Iterate over current attachment list and compare with the original list to
-                    // identify the gap of files to be added
-                    var update_forms = new FormData();
-                    for(var key1 in this.attachments){
-                        for(var key2 in this.attachments_original){
-                            // 2.1 If the item from both list has the same name and the url of the current attachment list is different them blank
-                            // it indicate that the file was not changed, nothing to do
-                            if(this.attachments[key1].name == this.attachments_original[key2].name && 'url' in this.attachments[key1]){
-                                control_flag = false;
-                            }
-                        }
-                        // 2.2 Add the new file to the queue if it is the case
-                        if(control_flag){
-                            update_forms.append(key1, this.attachments[key1]);
-                            add_control = true;
-                        }
-
-                        // 2.3 Reset the control flag for the next loop
-                        control_flag = true;
-                    }
-
-                    // 3. Define attachments to be deleted
-                    // Iterate over current attachment list and compare with the original list to
-                    // identify the gap of files to be added
-                    var delete_files = [];
-                    control_flag = true;
-                    for(var key1 in this.attachments_original){
-                        for(var key2 in this.attachments){
-                            if(this.attachments_original[key1].name == this.attachments[key2].name && 'url' in this.attachments[key2]){
-                                control_flag = false;
-                            }
-                        }
-                        // 3.2 Add the delete file names to the queue
-                        if(control_flag){
-                            delete_files.push(this.attachments_original[key1].name);
-                            delete_control = true;
-                        }
-                        // 3.3 Reset the control flag for the next loop
-                        control_flag = true;
-
-                    }
 
                     // 4. Add delete cases to the form
                     if(delete_files.length > 0){
